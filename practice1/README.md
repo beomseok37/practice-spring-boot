@@ -300,3 +300,72 @@ IOC 컨테이너, DI 컨테이너
 2월 3일
 
 ---
+
+### 섹션 4
+
+스프링 컨테이너
+
+- `ApplicationContext` 인터페이스가 스프링 컨테이너이다.
+- 스프링 컨테이너는 XML, 어노테이션 기반의 자바 설정 클래스, 커스텀 등을 통해 만들 수 있다.
+- 이전의 AppConfig 클래스를 사용한 방식이 자바 설정 클래스로 스프링 컨테이너를 만든 것이다.
+- `AnnotationConfigApplicationContext`가 `ApplicationContext`에 대한 구현체이고 생성자에 구성 정보 클래스를 넣어주면 스프링 컨테이너를 만들 수 있다.
+
+스프링 컨테이너 생성 과정
+
+- `new AnnotationConfigApplicationContext(AppConfig.class)` 를 통해 AppConfig의 설정 정보 기반 스프링 컨텍스트에 대한 구현체를 만들 수 있다.
+- 스프링 컨테이너는 파라미터로 넘어온 설정 클래스 정보를 기반으로 스프링 빈을 등록한다. (빈 이름은 메서드 이름으로 등록되고, 직접 부여할 수도 있다. 빈의 이름은 항상 다른 이름을 부여해주어야 한다. )
+- 스프링 컨테이너는 설정 정보를 참고하여 의존관계를 주입(DI)해줍니다.
+
+-> 스프링 컨테이너는 XML이나 자바 설정 클래스를 기반으로 스프링 빈을 등록하고 의존 관계를 주입해준다.
+
+빈 조회
+
+- `AnnotationConfigApplicationContext` 객체를 활용합니다.
+- `ac.getBean(빈이름, 타입)`, `ac.getBean(타입)`: 인자 정보를 가지는 빈 조회
+- 조회 대상이 없을 경우 `NoSuchBeanDefinitionException` 오류 발생
+- 타입으로 조회 시 같은 타입의 스프링 빈이 둘 이상이면 `NoUniqueBeanDefinitionException` 오류 발생 (빈 이름으로 조회하면 된다)
+- `ac.getBeansOfType()`: 해당 타입의 빈들을 모두 조회
+- 부모 타입으로 조회하면 자식 타입도 함께 조회된다. (모든 클래스의 조상인 object 클래스를 조회하면 모든 스프링 빈이 출력된다.)
+
+BeanFactory
+
+- 스프링 컨테이너의 최상위 인터페이스
+- 스프링 빈의 관리와 조회하는 역할을 담당
+
+ApplicationContext
+
+- `BeanFactory`를 상속받아서 제공한다
+- 빈 등록, 조회 이외에 다른 많은 일들을 한다.
+- MessageSource: 메시지 소스를 활용한 국제화 기능
+- EnvironmentCapable: 환경 변수 설정 관련 기능
+- ApplicationEventPublisher: 어플리케이션의 이벤트 발행, 구독 모델 지원
+- ResourceLoader: 파일, 클래스패스, 외부 리소스 조회 지원
+
+스프링 컨테이너 설정 정보 제공 방식
+
+- XML, 어노테이션 기반 자바 클래스, 커스텀 방법이 있다.
+- `ApplicationContext`를 구현한 `AnnotationConfigApplicationContext`는 자바 클래스 기반 설정 정보를 읽을 수 있다.
+- `ApplicationContext`를 구현한 `GenericXmlApplicationContext`는 XML 기반 설정 정보를 읽을 수 있다.
+- 스프링 부트가 사용되면서 XML 기반의 설정은 잘 사용하지 않는다. 하지만, 아직 많은 레거시 프로젝트에서 XML이 사용되고 있고, XML을 사용하면 컴파일 없이 빈 설정 정보를 변경할 수 있는 장점도 있다.
+
+BeanDefinition
+
+- 스프링은 XML, 자바 클래스 기반, Groovy 등 다양한 설정 형식을 제공한다.
+- 다양한 설정 방법, 커스텀 설정 방법을 제공할 수 있는 이유는 `BeanDefinition`이라는 추상화 덕분이다.
+- 이 또한 역할과 구현을 나누어줌으로써 스프링 컨테이너는 설정 형식에 상관없이 `BeanDefinition`만을 통해 빈을 등록 및 의존 관계 주입을 해줄 수 있다.
+- `BeanDefinition`은 빈의 설정 메타정보이다.
+- 스프링 컨테이너는 이 메타정보를 기반으로 스프링 빈을 생성한다.
+- 각각의 스프링 컨테이너 구현체들은 자신의 설정 정보를 읽을 수 있는 Reader들이 존재한다.
+  - `GenericXmlApplicationContext`: `XmlBeanDefinitionReader`
+  - `AnnotationConfigApplicationContext`: `AnnotatedBeanDefinitionReader`
+- 각각의 Reader를 통해 설정 정보를 읽고 이를 통해 `BeanDefinition`을 생성한다.
+- 새로운 형식의 설정 정보를 추가하고 싶다면, Reader를 만들어 `BeanDefinition`을 반환하도록 해주면 된다.
+- `BeanDefinition`을 직접 생성해서 스프링 컨테이너에 전달할 수 있다.
+
+정리
+
+- 스프링 컨테이너는 XML, 어노테이션 기반 자바 클래스 등 각각의 구현체를 통해 빈을 등록할 수 있다.
+- 등록된 빈은 스프링 컨테이너 구현체의 `getBean()` 메서드를 통해 가능하다.
+- `ApplicationContext`의 상위 인터페이스인 `BeanFactory`가 빈의 등록이나 조회와 같은 역할을 한다.
+- `ApplicationContext`는 스프링 빈 관리 이외의 여러 기능들을 수행한다.
+- 스프링 컨테이너는 전달받은 `BeanDefinition`이라는 설정 메타정보 객체를 통해 빈을 등록하기 때문에 다양한 설정 형식을 가질 수 있다.
