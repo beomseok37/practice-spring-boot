@@ -470,3 +470,109 @@ public class SingletonService {
 - 싱글톤으로 생성된 객체는 stateless하게 설계해야 한다.
 - 스프링 컨테이너는 CGLIB 라이브러리를 통해 바이트코드를 조작하여 `@Configuration`이 선언된 클래스를 상속받은 새로운 클래스를 선언하고 이 클래스가 싱글톤이 보장되도록 해준다.
 - `@Configuration` 없이 `@Bean`만 선언되면 싱글톤을 보장받지 못한다.
+
+2월 4일
+
+---
+
+### 섹션 6
+
+정리
+
+- 지금까지 `@Bean`이나 `<Bean />`을 통해 설정 정보에서 직접 등록할 빈을 나열했다. 이러한 등록이 반복되는 것은 귀찮을 일이다.
+- 그래서 스프링은 설정 정보가 없어도 자동으로 스프링 빈이 등록되도록 하는 컴포넌트 스캔과 의존관계 자동으로 주입해주는 기능을 제공해준다.
+
+컴포넌트 스캔
+
+```java
+@Configuration
+@ComponentScan
+public class AutoAppConfig {
+}
+```
+
+- `@ComponentScan` 어노테이션을 선언하면 컴포넌트 스캔을 할 수 있다.
+- 컴포넌트 스캔은 `@Component` 어노테이션이 붙은 클래스를 스캔해 스프링 빈으로 등록한다.
+- 스프링 등록을 하고 싶은 클래스의 경우 `@Component`를 선언해주면 컴포넌트 스캔에 의해 스프링 빈으로 등록된다.
+
+```java
+ @Component
+ public class MemoryMemberRepository implements MemberRepository {}
+
+```
+
+- 스프링 빈으로 등록된 클래스의 경우 의존관계 또한 명시해주어야 한다. 이전과 같은 경우 직접 작성해서 의존관계를 명시해주었지만, 이제는 설정 정보를 작성하지 않기 때문에 의존 관계 주입 또한 스프링 빈으로 등록할 클래스 상에 명시해주어야 한다.
+- `@Autowired` 를 통해 의존관계를 자동으로 주입해줄 수 있다.
+- 여러 개의 의존 관계도 한 번에 주입 받을 수 있다.
+
+```java
+@Component
+public class OrderServiceImpl implements OrderService {
+  private final MemberRepository memberRepository;
+  private final DiscountPolicy discountPolicy;
+
+  @Autowired
+  public OrderServiceImpl(MemberRepository memberRepository DiscountPolicy discountPolicy) {
+      this.memberRepository = memberRepository;
+      this.discountPolicy = discountPolicy;
+  }
+}
+```
+
+정리
+
+- 컴포넌트 스캔은 `@Component` 어노테이션이 선언된 클래스를 모두 스프링 빈으로 등록해준다.
+- 스프링 빈의 기본 이름은 클래스명을 사용하지만, 맨 앞글자만 소문자로 변경된다. (직접 설정도 가능)
+- 스프링 빈의 의존 관계 주입은 `@Autowired`를 선언하면 스프링 컨테이너가 자동으로 주입해준다. 기본 조회 전략은 같은 타입의 빈을 주입하는 것이다.
+
+탐색 위치 설정
+
+- `basePackages = {"hello.core", "hello.service"}` : 스캔 시작 위치를 지정할 수 있다.
+- `basePackageClasses` = 지정한 클래스의 패키지를 탐색 시작 위치로 지정한다.
+- 지정하지 않을 경우 `@ComponentScan`가 붙은 설정 정보 패키지가 시작 위치가 된다.
+
+-> 패키지 지정 위치를 지정하기 보다는 설정 정보 클래스를 프로젝트 최상단에 둠으로써 모든 프로젝트의 컴포넌트를 찾을 수 있도록 한다.
+-> 스프링 부트의 대표 시작 정보인 `@SpringBootApplication` 내부에 `@ComponentScan`이 들어있다. 그러므로 이를 프로젝트 루트 위치에 두는 것이 좋다.
+
+컴포넌트 스캔 기본 대상
+
+- `@Component`: 컴포넌트 스캔에 사용
+- `@Controller`: 스프링 MVC 컨트롤러로 인식
+- `@Service`: 비즈니스 로직임을 인식
+- `@Repository`: 스프링 데이터 접근 계층으로 인식하고, 데이터 계층의 예외를 스프링 예외로 변환해준다.
+- `@Configuration`: 스프링 설정 정보로 인식하고, 스프링 빈이 싱글톤을 유지하도록 처리해준다.
+- `@Component`를 제외한 어노테이션 내부에 `@Component`가 선언된 것을 확인할 수 있다.
+- 어노테이션은 상속 관계는 없다. 특정 어노테이션을 들고 있는 것을 인식할 수 있는 것은 자바 언어 기능이 아니라 스프링이 지원하는 기능이다.
+
+필터
+
+- includeFilters: 컴포넌트 스캔 대상을 추가로 지정
+- excludeFilters: 컴포넌트 스캔에서 제외할 대상을 지정
+
+FilterType 옵션
+
+- ANNOTATION: 어노테이션을 인식해서 동작
+- ASSIGNABLE_TYPE: 지정한 타입과 자식 타입을 인식해서 동작
+- ASPECTJ: AspectJ 패턴 사용
+- REGEX: 정규 표현식
+- CUSTOM: TypeFilter 라는 인터페이스를 구현해서 처리
+
+중복 등록
+
+- 자동으로 등록된 두 빈이 이름이 같아 충돌할 경우 `ConflictingBeanDefinitionException` 예외가 발생한다.
+- 수등으로 등록된 빈과 자동으로 등록된 빈이 충돌할 경우
+  - 예전: 수동 등록된 빈이 우선권을 갖는다.
+  - 현재: 스프링 부트에서는 충돌 시 오류가 발생하도록 기본값이 변경되었다. 물론 설정을 변경할 수 있다.
+
+정리
+
+- 컴포넌트 스캔을 통해 설정 정보를 직접 작성하지 않아도 자동으로 스프링 빈을 등록할 수 있다.
+- `@Component` 어노테이션이 선언된 클래스가 스프링 빈으로 등록된다.
+- 스프링 빈 등록 시 필요한 의존관계 주입은 `@Autowired`를 선언하면 자동으로 주입해준다.
+- 컴포넌트 스캔의 탐색 위치를 설정해줄 수 있다. 권장하는 방법은 컴포넌트 스캔 설정 파일을 프로젝트 루트에 위치시키는 것이다.
+- 컴포넌트 스캔에 포함할 대상과 제외할 대상을 선언할 수도 있습니다.
+- 이름이 중복된 빈이 있을 경우 스프링 부트는 오류를 반환합니다.
+
+2월 4일
+
+---
