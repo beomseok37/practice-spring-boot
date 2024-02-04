@@ -576,3 +576,184 @@ FilterType 옵션
 2월 4일
 
 ---
+
+### 섹션 7
+
+의존관계 주입 방법
+
+- 생성자 주입
+- 수정자 주입(setter)
+- 필드 주입
+- 일반 메서드 주입
+
+생성자 주입
+
+- 생성자를 통해 의존 관계를 주입 받는 방법
+- 생성자 호출시점에 1번만 호출되는 것이 보장된다.
+- 불변, 필수 의존 관계에 사용
+- 생성자가 1개라면 `@Autowired` 생략 가능
+
+수정자 주입(setter)
+
+- 필드 값을 변경하는 수정 메서드를 통해 의존 관계를 주입하는 방법
+- 선택, 변경 가능성이 있는 의존관계에 사용
+- 자바빈 프로퍼티 규약의 수정자 메서드 방식을 사용하는 방법이다.
+- `@Autowired`의 기본 동작은 주입할 대상이 없다면 오류가 발생한다. 오류가 발생하지 않도록 하려면 `@Autowired(required=false)`를 해주어야 한다.
+
+필드 주입
+
+- 필드에 바로 주입하는 방법이다.
+- 코드가 간결해지지만 외부에서 변경이 불가능해서 테스트하기 힘들다
+- DI 프레임워크가 없다면 아무것도 할 수 없다.
+- 테스트 코드 작성 시, `@Configuration`을 통해 설정하려는 목적일 때만 사용하자
+
+> `@Bean`에서 파라미터에 의존관계는 자동적으로 주입된다.
+
+```java
+@Bean
+BeanService beanService(DependentRepository dependentRepository){
+  return new BeanService(dependentRepository);
+}
+```
+
+일반 메서드 주입
+
+- 일반 메서드를 통해 주입 받을 수 있다.
+- 한 번에 여러 필드를 주입 받을 수 있다.
+- 일반적으로 잘 사용하지는 않는다.
+
+자동 주입 옵션 처리
+
+- `@Autowired(required=false)`: 자동 주입할 대상이 없으면 수정자 메서드 자체가 호출이 안됨
+- `org.springframework.lang.@Nullable`: 자동 주입할 대상이 없다면 null이 입력된다.
+- `Optional<>`: 자동 주입할 대상이 없다면 Optional.empty 가 입력된다.
+- `@Nullable`과 `Optional`은 스프링 전체적으로 사용이 된다. 생성자 자동 주입에서 특정 필드에만 사용하도록 할 수도 있다.
+
+생성자 주입을 선택해야 하는 이유
+
+- 과거 수정자 주입과 필드 주입을 많이 사용했지만, 최근에는 DI 프레임워크에서 대부분 생성자 주입을 권장한다.
+- 불변
+  - 대부분의 의존관계 주입은 한 번 일어나면 변경될 일이 없다.
+  - 수정자 주입 시 `setXxx` 메서드를 public으로 선언해두어야 한다.
+  - 생성자 메서드는 객체 생성 시 1번만 호출되는 것이 보장되기 때문에 불변하게 설계할 수 있다.
+- 누락
+  - `@Autowired`는 순수 자바코드일 경우 의존관계 주입이 누락되면 `NullPointException`으로 컴파일 단계에서는 오류를 포착하기 힘들다
+  - 생성자 주입을 사용하면 주입 데이터가 누락 될 경우 컴파일 오류가 발생한다. (코드 작성 단계에서 오류 파악이 가능하다.)
+
+`setXxx` 주입
+
+````java
+@Component
+class AutoWiredService1 {
+  DependentService1 dependentService1;
+  DependentService2 dependentService2;
+
+  void setDependentService1(DependentService1 dependentService1){
+    this.dependentService1 = dependentService1;
+  }
+
+  void setDependentService1(DependentService2 dependentService2){
+    this.dependentService2 = dependentService2;
+  }
+}
+
+생성자 주입
+
+```java
+@Component
+class AutoWiredService2 {
+  DependentService1 dependentService1;
+  DependentService2 dependentService2;
+
+  public AutoWiredService2(DependentService1 dependentService1,DependentService2 dependentService2){
+    this.dependentService1 = dependentService1;
+    this.dependentService2 = dependentService2;
+  }
+}
+````
+
+```java
+@Test
+void test(){
+  AutoWiredService autoWiredService = new AutoWiredService();
+  autoWiredService.doSth();
+  ...
+}
+```
+
+- 수정자를 통해 의존관계를 주입 받았다면 위 테스트코드 상에 아무 문제가 없다는 것을 알 수 있다.(하지만, 의존관계를 주입받지 않았기 때문에 오류가 발생한다.)
+- 생성자를 통해 의존관계를 주입 받았다면 위 테스트코드 작성 시점에 의존관계가 주입되지 않았다는 것을 바로 파악할 수 있다.
+
+- `final` 키워드
+  - 생성자 주입을 사용하면 final 키워드를 사용하여 생성자 상에서 설정되지 않은 의존관계가 있을 경우 컴파일 시점에 오류를 막아줄 수 있다.
+
+정리
+
+- 의존관계를 주입 받을 수 있는 방법은 다양하다. 하지만, 생성자 주입 방식을 사용하는 것이 프레임워크에 의존하지 않고 순수 자바 언어의 특징을 잘 살리는 방법이다.
+- 필수 값이 아닌 경우는 수정자 주입 방식으로 사용한다.
+
+롬복
+
+- 생서자와 관련된 코드를 작성하는 것은 귀찮은 일이다.
+- 이를 롬복을 통해 해소할 수 있다.
+- 롬복 라이브러리가 제공하는 `@RequiredArgsConstructor` 기능을 사용하면 final이 선언된 필드가 모두 포함된 생성자를 자동으로 만들어준다.
+
+조회된 빈이 두 개 이상일 경우
+
+- `@Autowired`는 타입으로 조회한다. 선택된 빈이 2개 이상일 경우 문제가 발생한다.
+- `@Autowired` 필드 명 매칭
+  - `@Autowired`는 타입 매칭을 시도하고, 2개 이상이 조회될 경우 필드 이름, 파라미터 이름으로 빈 이름을 추가 매칭한다.
+- `@Qualifier`
+  - 추가 구분자를 붙여 구분하는 방식(빈 이름이 변경되는 것은 아니다)
+  - 해당 구분자가 선언된 빈을 찾지 못한다면 주어진 구분자명을 이름으로 가진 빈을 추가로 찾는다.
+- `@Primary`
+  - 조회된 빈이 2개 이상일 경우 우선권을 가지게 해준다.
+- `@Primary`와 `@Qualifier` 둘 다 선언되었을 경우 `@Qualifier`가 우선권이 높다.
+- 어노테이션으로 구분하기
+  - 위의 방식들은 컴파일시 타입 체크가 불가능하다.
+  - 구분짓고자 하는 내용을 `@Qualifier`로 선언한 다음 이를 통해 어노테이션을 만들어 사용하면 빈을 구분하면서 타입체크 또한 할 수 있다.
+
+조회한 빈이 모두 필요할 경우
+
+- `Map<String, 클래스명>` : Map 키에 빈 이름, 밸류에 클래스 타입으로 조회된 모든 빈을 담아준다.
+- `List<클래스명>`: 클래스 타입으로 조회된 모든 빈을 담아준다.
+- 위 두 가지 방법으로 의존관계를 주입 받을 경우 조회된 모든 빈들을 조회해볼 수 있다.
+
+```java
+@Test
+void findAllBean(){
+    ApplicationContext ac = new AnnotationConfigApplicationContext(AutoAppConfig.class, DiscountService.class);
+    DiscountService discountService = ac.getBean(DiscountService.class);
+    Member user1 = new Member(1L, "user1", Grade.VIP);
+
+    int discount = discountService.discount(user1, 20000, "rateDiscountPolicy");
+
+    Assertions.assertThat(discount).isEqualTo(2000);
+}
+
+@RequiredArgsConstructor
+static class DiscountService{
+    final Map<String, DiscountPolicy> policyMap;
+    final List<DiscountPolicy> discountPolicies;
+
+    public int discount(Member member, int price, String discountCode){
+        DiscountPolicy discountPolicy = policyMap.get(discountCode);
+        int discount = discountPolicy.discount(member, price);
+
+        return discount;
+    }
+}
+```
+
+정리
+
+- 의존 관계 주입 중에서는 생성자 주입을 사용하는 것이 프레임워크에 의존하는 것이 아닌 순수 자바 언어의 특징을 살리는 방법이다.
+- 수정자 주입을 통해 변경될 수 있는 의존관계와 같은 경우, 옵션 설정을 통해 해당 빈이 존재하지 않을 경우 진행 방식을 결정할 수 있다. (`@Nullable`, `Optional`)
+- 롬복을 사용하면 코드 상에 귀찮은 부분을 많이 해소할 수 있다.
+- 조회된 빈이 두 개 이상일 경우 `@Qualifier`, `@Primary`를 사용해 특정 빈을 지정해줄 수 있다. (어노테이션을 만들 경우 타입 체크를 통해 컴파일 단계에서 오류를 잡을 수 있다.)
+- 여러 개의 빈을 조회할 수도 있다.(`Map`, `List`)
+- 되도록이면 자동 빈 등록을 사용하되, 광범위하게 영향을 미치거나 로직 중 다형성을 적극 활용할 경우 수동으로 빈을 등록하면 더 편리하게 개발할 수 있을 것이다.
+
+2월 4일
+
+---
