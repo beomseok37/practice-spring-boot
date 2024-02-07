@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.beomseok.boardserver.mapper.UserProfileMapper">
+
+    <select id="getUserProfile" resultType="com.beomseok.boardserver.dto.UserDTO">
+        SELECT id, userId, password, nickName, createTime, updateTime, isWithDraw, isAdmin, status
+        FROM board_user
+        WHERE id = #{id}
+    </select>
+
+    <insert id="insertUserProfile" parameterType="com.beomseok.boardserver.dto.UserDTO">
+        INSERT INTO board_user (userId, passWord, nickName, isWithDraw, status, isAdmin)
+        VALUES (#{userId}, #{password}, #{nickName}, #{isWithDraw}, #{status}, #{isAdmin})
+    </insert>
+
+    <update id="updateUserProfile" parameterType="com.beomseok.boardserver.dto.UserDTO">
+        UPDATE board_user
+        SET password=#{password},
+        nickName=#{nickName},
+        isWithDraw=#{isWithDraw},
+        status=#{status}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="deleteUserProfile">
+        DELETE
+        FROM board_user
+        WHERE userId = #{id}
+    </delete>
+
+    <insert id="register" parameterType="com.beomseok.boardserver.dto.UserDTO">
+        INSERT INTO board_user (userId, passWord, nickName, createTime, isWithDraw, status)
+        VALUES (#{userId}, #{password}, #{nickName}, #{createTime}, #{isWithDraw}, #{status})
+    </insert>
+
+    <select id="findByIdAndPassword" resultType="com.beomseok.boardserver.dto.UserDTO">
+        SELECT id,
+        userId,
+        passWord,
+        nickName,
+        createTime,
+        isWithDraw,
+        status
+        FROM board_user
+        WHERE id = #{id}
+        AND passWord = #{password}
+        AND status != 'DELETE'
+    </select>
+
+    <select id="findByUserIdAndPassword" resultType="com.beomseok.boardserver.dto.UserDTO">
+        SELECT id,
+        userId,
+        passWord,
+        nickName,
+        createTime,
+        isWithDraw,
+        status
+        FROM board_user
+        WHERE userId = #{userId}
+        AND passWord = #{password}
+        AND status != 'DELETE'
+    </select>
+
+    <select id="idCheck" resultType="int">
+        SELECT COUNT(id)
+        FROM board_user
+        WHERE userId = #{userId}
+    </select>
+
+    <update id="updatePassword" parameterType="com.beomseok.boardserver.dto.UserDTO">
+        UPDATE board_user
+        SET passWord = #{password}
+        WHERE userId = #{userId}
+    </update>
+
+</mapper>
