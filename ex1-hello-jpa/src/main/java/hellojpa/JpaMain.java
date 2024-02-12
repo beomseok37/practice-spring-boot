@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 public class JpaMain {
 
     public static void main(String[] args) {
-
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
         EntityManager em = emf.createEntityManager();
 
@@ -14,7 +13,6 @@ public class JpaMain {
 
         try{
             Member member = new Member();
-            member.setId(1L);
             member.setName("memberA");
             em.persist(member);
 

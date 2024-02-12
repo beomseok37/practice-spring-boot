@@ -1,13 +1,17 @@
 package hellojpa;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
 public class Member {
-    @Id
+    @Id @GeneratedValue
     private Long id;
+
+    @Column(length = 10, nullable = false)
     private String name;
+
+    @Column(unique = true)
+    private int age;
 
     public String getName() {
         return name;
