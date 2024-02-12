@@ -4,14 +4,23 @@ import jakarta.persistence.*;
 
 @Entity
 public class Member {
+    public Team getTeam() {
+        return team;
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
+    }
+
     @Id @GeneratedValue
     private Long id;
 
-    @Column(length = 10, nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "team_id")
+    private Team team;
+
     private String name;
 
-    @Column(unique = true)
-    private int age;
 
     public String getName() {
         return name;
