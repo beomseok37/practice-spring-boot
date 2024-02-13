@@ -12,15 +12,12 @@ public class JpaMain {
         tx.begin();
 
         try{
-            Team team = new Team();
-            team.setName("teamA");
-            em.persist(team);
 
-            Member member = new Member();
-            member.setName("member1");
-
-            member.setTeam(team);
-            em.persist(member);
+            Album album = new Album();
+            album.setName("album1");
+            album.setPrice(10000);
+            album.setArtist("artist1");
+            em.persist(album);
 
             tx.commit();
         } catch (Exception e){
