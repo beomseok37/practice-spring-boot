@@ -13,23 +13,11 @@ public class JpaMain {
 
         try{
 
-            Team team = new Team();
-            team.setName("team");
-
             Member member = new Member();
             member.setName("member1");
-            team.addMember(member);
-            em.persist(team);
+            member.getAddresses().add(new AddressEntity("city","street","zipcode"));
 
-            em.flush();
-            em.clear();
-
-            Member member1 = em.find(Member.class, member.getId());
-            Team team1 = em.find(Team.class, team.getId());
-            System.out.println("member1 = " + team1.getMembers().get(0));
-            team1.getMembers().stream().forEach(System.out::println);
-
-
+            em.persist(member);
             tx.commit();
         } catch (Exception e){
             tx.rollback();

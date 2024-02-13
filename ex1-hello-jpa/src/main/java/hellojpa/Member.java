@@ -24,13 +24,13 @@ public class Member {
 
     private String name;
 
-//    @OneToOne
-//    @JoinColumn(name = "locker_id")
-//    private Locker locker;
-//
-//    @OneToMany(mappedBy = "member")
-//    private List<MemberProduct> memberProducts = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "member_id")
+    private List<AddressEntity> addresses = new ArrayList<>();
 
+    public List<AddressEntity> getAddresses() {
+        return addresses;
+    }
 
     public String getName() {
         return name;
