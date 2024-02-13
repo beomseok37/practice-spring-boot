@@ -12,11 +12,12 @@ public class Team {
 
     private String name;
 
-    @OneToMany(mappedBy = "team")
+    @OneToMany(mappedBy = "team",cascade = CascadeType.ALL)
     private List<Member> members = new ArrayList<>();
 
     public void addMember(Member member){
-        members.add(member);
+        this.members.add(member);
+        member.setTeam(this);
     }
 
     public Long getId() {

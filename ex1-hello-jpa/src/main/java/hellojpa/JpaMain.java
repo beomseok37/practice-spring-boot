@@ -13,15 +13,27 @@ public class JpaMain {
 
         try{
 
-            Album album = new Album();
-            album.setName("album1");
-            album.setPrice(10000);
-            album.setArtist("artist1");
-            em.persist(album);
+            Team team = new Team();
+            team.setName("team");
+
+            Member member = new Member();
+            member.setName("member1");
+            team.addMember(member);
+            em.persist(team);
+
+            em.flush();
+            em.clear();
+
+            Member member1 = em.find(Member.class, member.getId());
+            Team team1 = em.find(Team.class, team.getId());
+            System.out.println("member1 = " + team1.getMembers().get(0));
+            team1.getMembers().stream().forEach(System.out::println);
+
 
             tx.commit();
         } catch (Exception e){
             tx.rollback();
+            e.printStackTrace();
         } finally {
             em.close();
         }

@@ -18,18 +18,18 @@ public class Member {
     @Id @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
     private Team team;
 
     private String name;
 
-    @OneToOne
-    @JoinColumn(name = "locker_id")
-    private Locker locker;
-
-    @OneToMany(mappedBy = "member")
-    private List<MemberProduct> memberProducts = new ArrayList<>();
+//    @OneToOne
+//    @JoinColumn(name = "locker_id")
+//    private Locker locker;
+//
+//    @OneToMany(mappedBy = "member")
+//    private List<MemberProduct> memberProducts = new ArrayList<>();
 
 
     public String getName() {

@@ -12,6 +12,6 @@ public class Locker {
 
     private Integer number;
 
-    @OneToOne(mappedBy = "locker")
-    private Member member;
+//    @OneToOne(mappedBy = "locker")
+//    private Member member;
 }
