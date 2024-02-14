@@ -14,34 +14,45 @@ public class JpaMain {
         tx.begin();
 
         try{
-//            for(int i=0;i<100;i++){
-//                Member member = new Member();
-//                member.setName("member"+i);
-//                em.persist(member);
-//            }
-//
-//            em.flush();
-//            em.clear();
-//
-//            String jpql = "select m from Member m order by m.name desc";
-//            List<Member> result = em.createQuery(jpql, Member.class)
-//                    .setFirstResult(0)
-//                    .setMaxResults(10)
-//                    .getResultList();
-//
-//            result.stream().forEach((member -> System.out.println("member.getName() = " + member.getName())));
-            Member member = new Member();
-            member.setName("member1");
-            member.setAddress(new Address("city","street","zipcode"));
-            em.persist(member);
+            Team team1 = new Team();
+            Team team2 = new Team();
+            team1.setName("teamA");
+            team2.setName("teamB");
+
+            Member member1 = new Member();
+            Member member2 = new Member();
+            Member member3 = new Member();
+            member1.setName("member1");
+            member2.setName("member2");
+            member3.setName("member3");
+
+            team1.getMembers().add(member1);
+            team1.getMembers().add(member2);
+            team2.getMembers().add(member3);
+            member1.setTeam(team1);
+            member2.setTeam(team1);
+            member3.setTeam(team2);
+
+            em.persist(team1);
+            em.persist(team2);
+            em.persist(member1);
+            em.persist(member2);
+            em.persist(member3);
 
             em.flush();
             em.clear();
 
-            String jpql = "select m.address from Member m";
-            List<Address> resultList = em.createQuery(jpql, Address.class).getResultList();
-            
-            resultList.stream().forEach((address -> System.out.println("address.getCity() = " + address.getCity())));
+            String jpql = "select t from Team t join fetch t.members";
+            List<Team> result = em.createQuery(jpql, Team.class)
+                    .getResultList();
+
+            for (Team team : result) {
+                System.out.println("team = " + team.getName());
+                for (Member member : team.getMembers()) {
+                    System.out.println("> member = " + member.getName());
+                }
+            }
+
             tx.commit();
         } catch (Exception e){
             tx.rollback();

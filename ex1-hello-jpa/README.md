@@ -1059,3 +1059,182 @@ JPQL 기타
 > 서브쿼리나 여러 기본 SQL 문법 지원 여부는 실제 코딩을 할 때 더 알아갈 수 있을 것 같다.
 
 ---
+
+## 섹션 11
+
+경로 표현식
+
+```roomsql
+select m.username 
+from Member m
+join m.team t
+join m.orders o
+where t.name = '팀A'
+```
+- `.`을 통해 객체 그래프를 탐색하는 것
+- 상태 필드
+  - 단순히 값을 저장하기 위한 필드 (`m.username`, `m.age`)
+  - 경로 탐색의 끝, 더 이상 탐색하지 않는다.
+- 연관 필드
+  - 연관 관계를 위한 필드
+  - 단일 값 연관 필드
+    - `@ManyToOne`, `@OneToOne` 대상이 엔티티인 경우
+    - 묵시적으로 내부 조인(inner join)을 발생시킨다. 이 후 더 탐색이 가능합니다.
+  - 컬렉션 값 연관 필드
+    - `@OneToMany`, `@ManyToMany` 대상이 컬렉션인 경우
+    - 묵시적으로 내부 조인을 발생시킨다. 이 후로의 탐색을 지원하지 않는다.
+    - `FROM` 절에서 명시적 조인을 통해 별칭을 얻으면 별칭을 통해 탐색 가능
+
+조인
+
+- 명시적 조인: join 키워드를 직접 사용
+  - `select m from Member m join m.team t`
+- 묵시적 조인: 경로 표현식에 의해 묵시적으로 SQL 조인 발생 (내부 조인만 가능)
+  - `select m.team from Member m`
+
+예제
+
+- `select o.member team from Order o` (O)
+- `select t.members from Team t` (O)
+- `select t.members.username from Team t` (X, 컬렉션 값은 탐색 불가능)
+- `select m.username from Team t join t.members m` (O)
+
+경로 탐색 시 주의 사항
+
+- 연관 필드 조회 시 항상 내부 조인 한다.
+- 컬렉션은 경로 탐색의 끝으로 명시적 조인을 통해 별칭을 얻어 이 후의 탐색을 해야 한다.
+- 경로 탐색은 주로 `SELECT`, `WHERE`절에 나타나지만 SQL문에서 `FROM` 절에 영향을 준다.
+
+> 가급적 묵시적 조인 대신 명시적 조인을 사용하자
+> 
+> 조인은 SQL 튜닝의 중요 포인트이다.
+> 
+> 묵시적 조인은 조인이 일어나는 상황을 한눈에 파악하기 어렵다.
+
+fetch join
+
+- SQL 조인의 종류가 아니다.
+- JPQL에서 성능 최적화를 위해 제공하는 기능이다.
+- 연관된 엔티티나 컬렉션을 SQL **한 번에 함께 조회**하는 기능이다.
+- `[LEFT [OUTER] | INNER] JOIN FETCH {조인 경로}`
+
+엔티티 페치 조인
+
+- 작성된 JPQL
+  ```roomsql
+  select m from Member m join fetch m.team
+  ```
+- 만들어진 SQL
+  ```roomsql
+  SELECT M.*, T.* FROM MEMBER M INNER JOIN TEAM T ON M.TEAM_ID=T.ID
+  ```
+  
+컬렉션 패치 조인
+
+- 작성된 JPQL
+  ```roomsql
+  select t from Team t join fetch t.members
+  ```
+- 만들어진 SQL
+  ```roomsql
+  SELECT T.*, M.* FROM Team t INNER JOIN Member M ON T.ID=M.TEAM_ID
+  ```
+
+
+DISTINCT
+
+- SQL의 `DISTINCT`는 중복된 결과를 제거
+- JPQL의 `DISTINCT`
+  - SQL에 `DISTINCT` 추가
+  - 어플리케이션 레벨에서 엔티티 중복을 제거
+
+페치 조인과 `DISTINCT`
+
+- SQL에 `DISTINCT`를 추가하지만 데이터가 다르므로 SQL 결과에서 중복 제거 실패한다.
+- `DISTINCT`가 추가로 어플리케이션에서 중복 제거를 시도한다.
+- 같은 식별자를 가진 TEAM 엔티티 제거
+- 하이버네이트6부터는 `DISTINCT` 명령어를 사용하지 않아도 어플리케이션에서 중복이 자동 제거됩니다.
+
+페치 조인과 일반 조인의 차이
+
+- 일반 조인 실행 시 연관된 엔티티를 함께 조회하지 않는다.
+  - `select t from Team t join  t.members m`를 통해 Team 객체를 가져올 경우 Team 객체만 가져올 뿐이다. Member 필드를 조회하면 다시 조회 쿼리가 발생한다.
+- JPQL은 결과를 반환할 때 연관관계를 고려하지 않는다.
+- 단지 `SELECT` 절에 지정한 엔티티만 조회할 뿐이다.
+- 페치 조인을 사용할 때만 연관된 엔티티도 함께 조회된다.(즉시 로딩)
+- 페치 조인은 객체 그래프를 SQL 한 번에 조회하는 개념이다.
+
+페치 조인의 특징과 한계
+
+- 페치 조인 대상에는 별칭을 주면 안된다.
+  - 하이버네이트에서 가능하지만 가급적 사용하지 말자.
+  - 패치 조인은 모든 연관된 데이터를 가져오기 위해 사용하는 것이다. 이 중 몇 개만 가져와서 수정하거나 한다면 `CASCADE` 등과 같은 옵션들로 인해 어떤 오류가 발생할지 모른다.
+- 둘 이상의 컬렉션은 페치 조인할 수 없다.
+- 컬렉션을 페치 조인하면 페이징 API를 사용할 수 없다.
+  - 일대일, 다대일 같은 단일 값 연관 필드들은 페이징 가능하다.
+  - 하이버네이트는 경고 로그를 남기고 메모리에서 페이징한다.
+  - 위에서 SQL `DISTINCT`를 사용해도 엔티티의 중복을 피할 수 없다고 말했다. 그러므로 하이버네이트는 모든 데이터들을 들고와서 메모리에서 페이징하는 수밖에 없다...
+- 연관된 엔티티들을 SQL로 한 번에 조회할 수 있다. 성능 최적화
+- 엔티티에 직접 적용하는 글로벌 로딩 전략보다 우선한다. (`@ManyToOne`에 `FetchType.LAZY`여도 즉시 조회됨)
+- 여러 테이블을 조인해서 엔티티가 가진 모양이 아닌 전혀 다른 결과를 내야된다면, 페치 조인 보다는 일반 조인을 사용하고 필요한 데이터들만 조회해서 DTO로 반환하는 것이 효과적이다.
+
+JPQL 다형성
+
+- TYPE: 조회 대상을 특정 자식으로 한정
+  ```roomsql
+  select i from Item i where type(i) IN (Book, Movie)
+  ```
+  ->
+  ```roomsql
+  select i from i where i.DTYPE in ('B', 'M')
+  ```
+- `TREAT`
+  - 자바 타입 캐스팅과 유사
+  - 상속 구조에서 부모 타입을 특정 자식 타입으로 다룰 때 사용
+  - `FROM`, `WHERE`, `SELECT`에서 사용
+  
+  ```roomsql
+  select i from Item i where treat(i as Book).author = ‘kim’
+  ```
+  ->
+  ```roomsql
+  select i.* from Item i where i.DTYPE = ‘B’ and i.author = ‘kim’
+  ```
+  
+엔티티 직접 사용
+
+- JPQL에서 엔티티를 직접 사용하면 SQL에서는 해당 엔티티의 기본 키 값을 사용한다.
+  ```java
+  String jpql = “select m from Member m where m = :member”;
+  List resultList = em.createQuery(jpql)
+                      .setParameter("member", member)
+                      .getResultList();
+  ```
+- 실행된 SQL: `SELECT m.* from Member m where m.id=?`
+
+Named 쿼리
+
+- 미리 정의해서 이름을 부여하고 사용하는 JPQL
+- 정적 쿼리
+- 어노테이션, XML을 통해 정의
+- 어플리케이션 로딩 시점에 초기화 후 재사용
+- 어플리케이션 로딩 시점에 쿼리를 검증할 수 있다.
+- XML 설정이 항상 우선권을 가진다. (어플리케이션 운영 환경에 따라 다른 XML을 배포할 수 있다.)
+- Spring Data Jpa 사용 시 알아서 해준다!..
+
+벌크 연산
+
+- JPA의 변경 감지 기능을 실행하여 update하는 것이 아니라 한 번에 update한다.
+- 쿼리 한 번으로 여러 테이블 로우를 변경
+- `executeUpdate()`는 영향 받는 엔티티 수 반환
+- `UPDATE`와 `DELETE`를 지원한다.
+- 하이버네이트 구현체는 `INSERT INTO .. SELECT` 문도 지원한다.
+- 벌크 연산은 영속성 컨텍스트를 무시하고 데이터베이스에 직접 쿼리하는 것이다.
+  - 벌크 연산 실행 전에 영속성 컨텍스트의 내용을 모두 flush 하고 진행한다.
+  - 벌크 연산 수행 후 영속성 컨텍스트를 초기화한다.
+
+> 묵시적 `join` 보다는 명시적으로 `join`을 설정해주자.
+> 
+> 연관 엔티티, 컬렉션 조회 시 fetch `join`으로 성능 최적화하자
+> 
+> 벌크 연산을 통해 한 번의 쿼리로 여러 개 데이터를 변경하자
