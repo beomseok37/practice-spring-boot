@@ -846,3 +846,216 @@ member1.getAddress().setCity("new city");
 > 식별자가 필요하고 지속적으로 값을 추적, 변경해야 한다면 그것은 값 타입이 아닌 엔티티이다.
 
 ---
+
+## 섹션 10
+
+JPA 쿼리 방법
+
+- **JPQL**
+- JPA Criteria
+- **QueryDSL**
+- 네이티브 SQL
+- JDBC API 직접 사용, MyBatis, SpringJdbcTemplate 함께 사용
+
+JPQL
+
+- JPA가 제공하는 SQL을 추상화한 객체 지향 쿼리 언어
+- SQL과 문법 유사하다. (`SELECT`, `FROM`, `WHERE`, `GROUP BY`, `HAVING`, `JOIN`)
+- JPQL은 엔티티 객체를 대상으로 쿼리한다.
+
+```java
+String sql = "select m from Member m where m.name like '%hello%'";
+List<Member> result = em.createQuery(jpql, Member.class)
+        .getResultList();
+```
+
+- 테이블이 아닌 객체를 대상으로 검색하는 객체 지향 쿼리
+- SQL을 추상화해서 특정 데이터베이스 SQL에 의존하지 않는다.
+
+> JPQL은 객체 지향 SQL
+
+Criteria
+
+- 문자가 아닌 자바 코드로 JPQL을 작성할 수 있다.
+- JPQL 빌더 역할
+- JPA 공식 기능
+- 단점: 너무 복잡하고 실용성이 없다.
+
+-> Criteria 대신 QueryDSL 사용을 권장한다.
+
+QueryDSL
+
+- 문자가 아닌 자바 코드로 JPQL을 작성할 수 있다.
+- JPQL 빌더 역할
+- 컴파일 시점에 문법 오류를 찾을 수 있다.
+- 동적 쿼리 작성이 편리하다.
+- 단순하고 쉽다.
+- **실무 사용을 권장한다.**
+
+네이티브 SQL
+
+- JPA가 제공하는 SQL을 직접 사용하는 기능
+- JPQL로 해결할 수 없는 특정 데이터베이스에 의존하는 기능
+
+기타 조회 방법
+
+- JDBC 커넥션을 직접 사용, 스프링 JdbcTemplate, MyBatis 등
+- 영속성 컨텍스트를 적절한 시점에 강제로 플러시 해주어야 한다.
+
+JPQL 소개
+
+- JPQL은 객체 지향 쿼리 언어이다. 따라서 테이블 대상이 아닌 엔티티 객체를 대상으로 쿼리한다.
+- JPQL은 SQL을 추상화해서 특정 데이터베이스 SQL에 의존하지 않는다.
+- JPQL은 SQL로 변환된다.
+
+JPQL 문법
+
+- 엔티티와 속성은 대소문자를 구분한다.
+- JPQL 키워드는 대소문자를 구분하지 않는다.
+- 엔티티 이름을 통해 객체를 조회한다. (테이블 이름이 아니다.)
+- 별칭은 필수이다. (`as` 생략 가능)
+- `select m from Member m where m.age > 18`
+
+집합
+
+- `COUNT()`: 갯수
+- `SUM()`: 총합
+- `AVG()`: 평균
+- `MAX()`: 최대값
+- `MIN()`: 최소값
+
+정렬
+
+- `GROUP BY`, `HAVING`
+- `ORDER BY`
+
+반환 타입 관련
+
+- `TypedQuery` = 반환 타입이 명확할 때 사용
+  ```java
+  TypedQuery<Member> query = em.createQuery("SELECT m FROM Member m", Member.class);
+  ```
+- `Query` = 반환 타입이 명확하지 않을 때 사용
+  ```java
+  Query query = em.createQuery("SELECt m.username, m.age from Member m");
+  ```
+  
+결과 조회 방법
+
+- `query.getResultList()`
+  - 결과가 하나 이상일 때, 리스트 반환
+  - 결과가 없으면 빈 리스트 반환
+- `query.getSingleResult()`
+  - 결과가 없으면: `javax.persistence.NoResultException`
+  - 결과가 2개 이상이면: `javax.persistence.NonUniqueResultException`
+
+파라미터 바인딩
+
+- **이름 기준**:
+  ```java
+  String query = "select m from Member m where m.username = :username"
+  em.createQuery(query,Member.class)
+    .setParameter("username", usernameParam)
+    .getResultList(); 
+  ```
+- 위치 기준
+  ```java
+  String query = "select m from Member m where m.username = ?1"
+  em.createQuery(query,Member.class)
+    .setParameter(1, usernameParam)
+    .getResultList(); 
+  ```
+  
+프로젝션
+
+- `SELECT` 절에 조회할 대상을 지정하는 것을 말한다.
+- 프로젝션 대상: 엔티티, 임베디드 타입, 스칼라 타입(숫자, 문자 등 기본 데이터 타입)
+  - 엔티티 프로젝션: `select m from Member m`
+  - 엔티티 프로젝션: `select m.team from Member m` <- 별 좋은 방법은 아니다. 조인이 사용되면 명시적으로 표현해주는 게 좋다!
+  - 임베디드 타입 프로젝션: `select m.address from Member m`
+  - 스칼라 타입 프로젝션: `select m.username from Member m`
+  - `DISTINCT` 사용 가능
+
+값 조회 방법
+
+- `SELECT m.username, m.age FROM Member m` 에서 조회한 것들을 반환받는 방법
+- `Query` 타입으로 조회
+- `Object[]` 타입으로 조회
+- new 명령어로 조회
+  - 위와 같은 경우 조회할 값을 필드로 갖는 DTO 클래스를 생성해 반환 받는다.
+  - `select new {패키지명}.MemberDTO(m.username,m.age) from Member m`
+  - 패키지 명을 포함한 전체 클래스 명 사용
+  - DTO 클래스에 순서와 타입이 일치하는 생성자가 필요하다.
+
+페이징
+
+- JPA는 페이징을 두 API로 추상화
+- `setFirstResult(int startPosition)`: 조회 시작 위치
+- `setMaxResults(int maxResult)` : 조회할 데이터 수
+- 위 두 api를 통해 대부분의 DB 언어에 대한 페이징 기능 제공
+
+조인
+
+- 내부 조인
+  - `select m from Member m [inner] join m.team t`
+- 외부 조인
+  - `select m from Member m left [outer] join m.team t`
+- 세타 조인
+  - `select count(m) from Member m, Team t where m.username = t.name`
+
+ON 절
+- 조인 대상 필터링: join할 테이블에 조건을 더 해 필터링한 경우
+- 연관 관계 없는 엔티티 외부 조인
+
+서브 쿼리
+
+- `[NOT] EXISTS (subquery)`: 서브쿼리에 결과가 존재하면 참
+- `{ALL | ANY | SOME} (subquery)`
+  - `ALL` 모두 만족하면 참
+  - `ANY`, `SOME`: 같은 의미, 조건을 하나라도 만족하면 참
+- `[NOT] IN (subquery)` : 서브 쿼리 결과 중 하나라도 같은 것이 있으면 참
+- 한계
+  - JPA는 `WHERE`, `HAVING` 절에서만 서브 쿼리가 가능하다.
+  - `SELECT` 절도 가능(하이버네이트에서 지원)
+  - (예전 강의이기 때문에 실제 구현해보면서 느껴봐야 될 듯..)
+
+JPQL 타입 표현
+- 문자: 'hello'
+- 숫자: 1L, 1D, 1F
+- boolean: TRUE, FALSE
+- ENUM: 패키지명 포함 클래스명
+- 엔티티 타입: `TYPE(m) = Member` 상속 관계에서 사용
+
+JPQL 기타
+
+- SQL과 문법이 같은 식
+- `EXISTS`, `IN`
+- `AND`, `OR`, `NOT`
+- `=,` `>`, `>=`, `<`, `<=`, `<>`
+- `BETWEEN`, `LIKE`, `IS NULL`
+- 기본 CASE 식
+- 조건식
+  - `COALESCE`: 하나씩 조회해서 null이 아니면 반환, null이면 두번째 값 반환
+    - `select coalesce(m.username, '이름 없는 회원') from Member m`
+  - `NULLIF`: 두 값이 같으면 null 반환, 다르면 첫번째 값 반환
+    - `select nullif(m.username, '관리자') from Member m`
+- 기본 함수
+  - `CONCAT`
+  - `SUBSTRING`
+  - `TRIM`
+  - `LOWER`, `UPPER`
+  - `LENGTH`
+  - `LOCATE`
+  - `ABS`, `SQRT`, `MOD`
+  - `SIZE`, `INDEX`(JPA 용도)
+- 사용자 정의 함수
+  - 하이버네이트는 사용전 방언에 추가해야 한다.
+  - 사용하는 DB 방언을 상속받고, 사용자 정의 함수를 등록한다.
+
+> JPQL은 객체 지향적인 쿼리를 만들어 사용할 수 있도록 해준다.
+> 
+> 다른 쿼리 방식들 보다는 JPQL을 사용하고 동적 쿼리는 QueryDSL을 활용하자
+> 
+> 서브쿼리나 여러 기본 SQL 문법 지원 여부는 실제 코딩을 할 때 더 알아갈 수 있을 것 같다.
+
+---

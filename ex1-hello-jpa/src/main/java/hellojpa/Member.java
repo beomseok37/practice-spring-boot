@@ -24,12 +24,23 @@ public class Member {
 
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "member_id")
-    private List<AddressEntity> addresses = new ArrayList<>();
+//    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+//    @JoinColumn(name = "member_id")
+//    private List<AddressEntity> addresses = new ArrayList<>();
+//
+//    public List<AddressEntity> getAddresses() {
+//        return addresses;
+//    }
 
-    public List<AddressEntity> getAddresses() {
-        return addresses;
+    @Embedded
+    private Address address;
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public String getName() {
