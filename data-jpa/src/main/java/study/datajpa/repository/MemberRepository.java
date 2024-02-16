@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import study.datajpa.dto.MemberDto;
+import study.datajpa.dto.UsernameOnly;
 import study.datajpa.entity.Member;
 
 import java.util.Collection;
@@ -31,8 +32,8 @@ public interface MemberRepository extends JpaRepository<Member,Long>, MemberRepo
 
     Member findByUsername(String username);
 
-    @Query("select m from Member m join fetch m.team t where t.name = :teamName")
-    Slice<Member> findPageable(@Param("teamName") String teamName, Pageable pageable);
+    @Query(value = "select m from Member m join fetch m.team t where t.name = :teamName")
+    Page<Member> findPageable(@Param("teamName") String teamName, Pageable pageable);
 
     @Modifying
     @Query("update Member m set m.age = m.age + 1 where m.age >= :age")
@@ -40,4 +41,6 @@ public interface MemberRepository extends JpaRepository<Member,Long>, MemberRepo
 
     @EntityGraph(attributePaths = {"team"})
     List<Member> findMemberEntityGraphBy();
+
+    <T> List<T> findProjectionsByUsername(String username, Class<T> type);
 }

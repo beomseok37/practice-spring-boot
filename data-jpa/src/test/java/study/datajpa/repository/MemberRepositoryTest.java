@@ -8,6 +8,7 @@ import org.springframework.data.domain.*;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
+import study.datajpa.dto.UsernameOnly;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
@@ -160,15 +161,15 @@ class MemberRepositoryTest {
 
         //when
         PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "username"));
-        Slice<Member> page = memberRepository.findPageable("teamA",pageRequest);
+        Page<Member> page = memberRepository.findPageable("teamA",pageRequest);
 
         //then
 
         List<Member> content = page.getContent();
         assertThat(content.size()).isEqualTo(3);
-//        assertThat(page.getTotalElements()).isEqualTo(4);
+        assertThat(page.getTotalElements()).isEqualTo(4);
         assertThat(page.getNumber()).isEqualTo(0);
-//        assertThat(page.getTotalPages()).isEqualTo(2);
+        assertThat(page.getTotalPages()).isEqualTo(2);
         assertThat(page.isFirst()).isTrue();
         assertThat(page.hasNext()).isTrue();
     }
@@ -257,19 +258,41 @@ class MemberRepositoryTest {
     @Test
     public void auditing() throws Exception {
         //given
-        Member member = new Member("member",10);
+        Member member = new Member("auditing member",10);
         memberRepository.save(member);
         //when
-        member.setUsername("new member");
+        member.setUsername("new auditing member");
 
         em.flush();
         em.clear();
         //then
-        Optional<Member> optionalMember = memberRepository.findById(1L);
-        System.out.println("optionalMember.get().getCreateTime() = " + optionalMember.get().getCreateTime());
-        System.out.println("optionalMember.get().getUpdateTime() = " + optionalMember.get().getUpdateTime());
-        System.out.println("optionalMember.get().getCreatedBy() = " + optionalMember.get().getCreatedBy());
-        System.out.println("optionalMember.get().getLastModifiedBy() = " + optionalMember.get().getLastModifiedBy());
+        Member newMember = memberRepository.findByUsername("new auditing member");
+        System.out.println("optionalMember.get() = " + newMember);
+        System.out.println("optionalMember.get().getCreateTime() = " + newMember.getCreateTime());
+        System.out.println("optionalMember.get().getUpdateTime() = " + newMember.getUpdateTime());
+        System.out.println("optionalMember.get().getCreatedBy() = " + newMember.getCreatedBy());
+        System.out.println("optionalMember.get().getLastModifiedBy() = " + newMember.getLastModifiedBy());
     }
 
+    @Test
+    public void findProjectionsByUsername() throws Exception {
+        //given
+        Team team = new Team("teamA");
+        em.persist(team);
+        Member member1 = new Member("member",10,team);
+        Member member2 = new Member("member",20,team);
+        em.persist(member1);
+        em.persist(member2);
+        em.flush();
+        em.clear();
+
+        //when
+        List<UsernameOnly> usernames = memberRepository.findProjectionsByUsername("member",UsernameOnly.class);
+
+        //then
+
+        for (UsernameOnly username : usernames) {
+            System.out.println("username = " + username.getUsername());
+        }
+    }
 }
