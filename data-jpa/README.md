@@ -163,3 +163,51 @@ Auditing
 - `Page`의 제너릭 엔티티를 DTO로 변환해서 반환하는 것도 가능하다.
 
 ---
+
+### 섹션 6
+
+SimpleJpaRepository
+
+```java
+@Repository
+@Transactional(readOnly = true)
+public class SimpleJpaRepository<T, ID> implements JpaRepositoryImplementation<T, ID> {
+    @Transactional
+    @Override
+    public <S extends T> S save(S entity) {
+
+        Assert.notNull(entity, "Entity must not be null");
+
+        if (entityInformation.isNew(entity)) {
+            entityManager.persist(entity);
+            return entity;
+        } else {
+            return entityManager.merge(entity);
+        }
+    }
+}
+```
+
+- `@Repository`가 적용되어 있어 스프링 컴포넌트 스캔의 대상이 되어 스프링 빈으로 등록된다. 그리고 JPA 예외들을 스프링이 추상화한 예외로 변환해준다.
+- `@Transactional`
+  - 모든 JPA의 변경은 트랜잭션 안에서 동작한다.
+  - 서비스 계층에서 트랜잭션 시작하지 않으면 레포지토리에서 트랜잭션 시작
+  - 서비스 계층에서 트랜잭션 시작하면 전파 받아서 사용
+- `@Transactional(readOnly = true)`
+  - 데이터를 단순히 조회만하고 변경하지 않을 때 사용
+  - 트랜잭션 종료 시 플러시를 생략해서 약간의 성능 향상이 있음
+- `save()` 메서드
+  - 새로운 엔티티면 persist
+  - 새로운 엔티티가 아니면 merge
+  - 변경된 엔티티를 save로 저장하면 안되는 이유: merge는 DB에서 해당 엔티티가 존재하는지 확인하는 작업이 무조건 포함되어 있어 SELECT 쿼리가 한 번 나가게 된다.)
+
+새로운 엔티티 판단 전략
+
+- 식별자가 객체일 때 `null`로 판단
+- 식별자가 자바 기본 타입일 때 0으로 판단
+- `Persistable` 인터페이스를 구현해서 판단 로직 변경 가능
+  - 식별자 생성 전략이 직접 할당이면 이미 식별자가 있는 상태로 `save()`가 호출된다.
+  - 식별자가 있는 상황이므로 무조건 `merge()`가 호출되게 되므로 매우 비효율적이다.
+  - `Persistable을` 구현해서 새로운 엔티티 확인 여부를 직접 구현하는 것이 효과적이다.
+  - `@CreateDate`와 조합하여 `isNew()` 메서드를 통해 `createdDate==null`일 경우 새로운 엔티티로 판별하는 방법도 있다.
+
