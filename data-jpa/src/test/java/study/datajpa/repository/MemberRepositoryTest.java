@@ -238,4 +238,38 @@ class MemberRepositoryTest {
 
         //then
     }
+
+    @Test
+    public void findMemberCustom() throws Exception {
+        //given
+        Member member = new Member("member1",10);
+        memberRepository.save(member);
+
+        em.flush();
+        em.clear();
+        //when
+        List<Member> members = memberRepository.findMemberCustom();
+
+        //then
+        assertThat(members.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void auditing() throws Exception {
+        //given
+        Member member = new Member("member",10);
+        memberRepository.save(member);
+        //when
+        member.setUsername("new member");
+
+        em.flush();
+        em.clear();
+        //then
+        Optional<Member> optionalMember = memberRepository.findById(1L);
+        System.out.println("optionalMember.get().getCreateTime() = " + optionalMember.get().getCreateTime());
+        System.out.println("optionalMember.get().getUpdateTime() = " + optionalMember.get().getUpdateTime());
+        System.out.println("optionalMember.get().getCreatedBy() = " + optionalMember.get().getCreatedBy());
+        System.out.println("optionalMember.get().getLastModifiedBy() = " + optionalMember.get().getLastModifiedBy());
+    }
+
 }
