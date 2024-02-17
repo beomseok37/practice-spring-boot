@@ -25,7 +25,7 @@ order
 
 페이징
 
-- fetchResult()를 통해 전체 데이터 개수도 조회할 수 있었으나 group by 와 사용시 문제점이 생겨 deprecated 됨..
+- `fetchResult()`를 통해 전체 데이터 개수도 조회할 수 있었으나 group by 와 사용시 문제점이 생겨 deprecated 됨..
 - 원래 count 쿼리는 성능상 문제가 될 경우가 있었으므로 그냥 따로 작성하자
 
 집합
@@ -37,23 +37,44 @@ group by, having 모두 제공한다.
 
 조인
 
-- join(조인 대상, 별칭으로 사용할 Q타입)
-- join(), innerJoin()
-- leftJoin(), rightJoin()
-- on 사용 가능
+- `join(조인 대상, 별칭으로 사용할 Q타입)`
+- `join()`, `innerJoin()`
+- `leftJoin()`, `rightJoin()`
+- `on` 사용 가능
   - 조인 대상 필터링
   - 연관관계 없는 엔티티 외부 조인
-- fetchJoin() 가능
+- `fetchJoin()` 가능
 
 서브쿼리
 
-- select, where 절에서 사용 가능
-- JPA JPQL 서브쿼리가 from 절은 서브쿼리를 지원하지 않기 때문에 Querydsl도 지원 X
-  - 대부분 join으로 변경 가능..
+- `select`, `where` 절에서 사용 가능
+- JPA JPQL 서브쿼리가 `from` 절은 서브쿼리를 지원하지 않기 때문에 Querydsl도 지원 X
+  - 대부분 `join`으로 변경 가능..
   - 쿼리 두 번 실행
   - nativeSQL
 
 case, when 사용 가능하다.
 
 상수, 문자 더하기 가능하다.
+
+프로젝션
+
+- 대상이 하나일 경우 해당 필드의 타입으로 받을 수 있다.
+- 프로젝션 대상이 여러 개일 경우 튜플을 통해 조회할 수 있다.
+- 조회하려는 필드가 여러 개일 경우 DTO로 선언해서 받을 수 있다.
+  - `Projections.bean()` : 프로퍼티 setter를 통해 DTO생성
+  - `Projections.fields()` : 필드 직접 접근
+    - 필드명이 엔티티와 다를 경우 `{QEntity}.{source}.as({alias})`, `ExpressionUtils.as(source, alias)`
+  - `Projections.constructor()` : 생성자 사용
+  - `@QueryProjection` : 컴파일러가 타입 체크까지 할 수 있어 가장 안전하지만, DTO가 QueryDSL 어노테이션을 유지해야한다는 점과 DTO까지 Q파일을 생성해야 하는 단점이 있다.
+
+동적 쿼리
+
+- `BooleanBuilder`를 통해 `null`이 아닐 경우만 연결시키는 방법이 있다.
+- `where`절에서 `null`은 무시된다. `BooleanExpression`을 활용하면 반환값이 `null`일 경우 자동 제외된다.
+
+SQL Function
+
+- JPA와 같이 Dialect에 등록된 내용만 호출할 수 있다. (등록하는 방법도 있긴 하다..)
+- ansi 표준 함수들은 querydsl에 상당부분 내장하고 있다.
 
