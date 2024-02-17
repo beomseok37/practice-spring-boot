@@ -87,3 +87,21 @@ SQL Function
 profile
 
 - 실행되는 관점에 따라 실행되지 않게 할 때 사용된다.
+
+Spring Data JPA + QueryDSL
+
+- 사용자 정의 리포지토리 생성
+- JpaRepository와 함께 커스텀 레포지토리를 상속받아 생성
+- 사용자 정의 레포지토리의 구현체 내부에서 QueryDSL을 사용해 구현
+
+QueryDsl + Page
+
+- Pageable 인자를 통해 offset과 limit을 얻어온다.
+- PageImpl 객체로 반환해 Page 관련 정보를 모두 전달할 수 있다.
+- fetchCount와 fetchResult 모두 deprecate 됐으므로 그냥 count관련 쿼리는 필요할 때만 사용되도록 하자
+
+Sort
+
+- 조건이 조금만 복잡해져도 Pageable의 Sort 기능을 사용하기 어렵다
+- 루트 엔티티 범위를 넘어서는 정렬 기능이 필요하다면 스프링 데이터 페이징이 제공하는 Sort를 사용하기 보다는 파라미터를 받아 직접 처리하는 것이 낫다.
+
