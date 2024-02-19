@@ -40,3 +40,7 @@ Path, Query
 - Query Parameter: {HOST_URL}/users?**age=15**
   - 여러 데이터의 정렬이나 필터링이 필요할 경우
   - 예) 나이가 20살인 유저들 정보를 얻어올 경우
+
+[과제 1](https://beomseok37.tistory.com/181)
+
+---
