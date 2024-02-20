@@ -43,4 +43,6 @@ Path, Query
 
 [과제 1](https://beomseok37.tistory.com/181)
 
+[과제 2](https://www.inflearn.com/blogs/6553)
+
 ---
