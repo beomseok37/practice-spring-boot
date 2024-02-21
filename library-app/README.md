@@ -1,3 +1,18 @@
+# 인프런 워밍업 클럽 0기 - 백엔드 코스
+
+과제 제출
+
+| 과제     |링크|
+|--------|---|
+| 과제1    |[링크](https://beomseok37.tistory.com/181)|
+| 과제2    |[링크](https://www.inflearn.com/blogs/6553)|
+| 과제3    |[링크](https://www.inflearn.com/blogs/6633)|
+| 과제4    |[]()|
+| 과제5    |[]()|
+| 과제6    |[]()|
+| 과제7    |[]()|
+| 미니프로젝트 |[]()|
+
 ## Day 1
 
 @SpringBootApplication
@@ -40,9 +55,5 @@ Path, Query
 - Query Parameter: {HOST_URL}/users?**age=15**
   - 여러 데이터의 정렬이나 필터링이 필요할 경우
   - 예) 나이가 20살인 유저들 정보를 얻어올 경우
-
-[과제 1](https://beomseok37.tistory.com/181)
-
-[과제 2](https://www.inflearn.com/blogs/6553)
 
 ---
