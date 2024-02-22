@@ -1,30 +1,29 @@
 package dev.beomseok.boardserver.dto;
 
+import com.querydsl.core.annotations.QueryProjection;
+import dev.beomseok.boardserver.domain.User;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Date;
 
+import static dev.beomseok.boardserver.domain.User.*;
+
 @Getter
 @Setter
-@ToString
+@NoArgsConstructor
 public class UserDTO {
-    public static boolean hasNullDataBeforeSignup(UserDTO userDTO) {
-        return userDTO.getUserId() == null || userDTO.getPassword() == null
-                || userDTO.getNickName() == null;
-    }
-    public static enum Status{
-        DEFAULT, ADMIN, DELETED
-    }
 
-    private int id;
     private String userId;
-    private String password;
     private String nickName;
-    private boolean isAdmin;
-    private boolean isWithDraw;
-    private Status status;
-    private Date createTime;
-    private Date updateTime;
+    private UserStatus status;
+
+    @QueryProjection
+    public UserDTO(String userId, String nickname, UserStatus status){
+        this.userId = userId;
+        this.nickName = nickname;
+        this.status = status;
+    }
 }
