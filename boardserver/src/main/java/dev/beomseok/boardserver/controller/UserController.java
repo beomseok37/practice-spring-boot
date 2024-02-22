@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import static dev.beomseok.boardserver.domain.User.UserStatus;
+import static dev.beomseok.boardserver.utils.SessionUtil.*;
 
 @RestController
 @RequestMapping("/users")
@@ -27,102 +28,74 @@ public class UserController {
     static LoginResponse loginResponse = null;
 
     @PostMapping("sign-up")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void signUp(@RequestBody UserSignUpDto userSignUpDto){
-        if(UserSignUpDto.hasNullDataBeforeSignup(userSignUpDto)){
+    public ResponseEntity signUp(@RequestBody UserSignUpDto userSignUpDto) {
+        if (UserSignUpDto.hasNullDataBeforeSignup(userSignUpDto)) {
             throw new RuntimeException("회원가입 정보를 확인해주세요");
         }
         userService.register(userSignUpDto);
+        return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @PostMapping("sign-in")
     public ResponseEntity<LoginResponse> login(@RequestBody UserLoginRequest request,
-                            HttpSession session){
+                                               HttpSession session) {
         String id = request.getUserId();
-        String password=  request.getPassword();
-        UserDTO userInfo = userService.login(id,password);
+        String password = request.getPassword();
 
-        if(userInfo == null){
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
-        } else if(userInfo!=null){
-            LoginResponse loginResponse = LoginResponse.success(userInfo);
-
-            if(userInfo.getStatus() == UserStatus.ADMIN){
-                SessionUtil.setLoginAdminId(session, id);
-            } else {
-                SessionUtil.setLoginMemberId(session, id);
-            }
-
-            return new ResponseEntity<>(loginResponse, HttpStatus.OK);
-        } else {
-            throw new RuntimeException("Login Error! 유저 정보가 없거나 지원되지 않는 유저입니다.");
+        UserDTO userInfo = userService.login(id, password);
+        if (userInfo == null) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
+
+        setLoginUserId(session,userInfo);
+        LoginResponse loginResponse = LoginResponse.success(userInfo);
+        return new ResponseEntity(loginResponse, HttpStatus.OK);
     }
 
     @GetMapping("my-info")
-    public ResponseEntity<UserDTO> memberInfo(HttpSession session){
-        String id = SessionUtil.getLoginMemberId(session);
-        if (id == null){
-            id = SessionUtil.getLoginAdminId(session);
-        }
+    public ResponseEntity<UserDTO> memberInfo(HttpSession session) {
+        String userId = getLoginUserId(session);
 
-        if(id == null){
-            return new ResponseEntity<>(null,HttpStatus.UNAUTHORIZED);
-        }
-
-        UserDTO memberInfo = userService.getUserInfo(id);
-        return new ResponseEntity<>(memberInfo,HttpStatus.OK);
+        UserDTO memberInfo = userService.getUserInfo(userId);
+        return new ResponseEntity(memberInfo, HttpStatus.OK);
     }
 
     @PutMapping("logout")
-    public void logout(HttpSession session){
-        SessionUtil.clear(session);
+    public void logout(HttpSession session) {
+        clearLoginSession(session);
     }
 
     @PatchMapping("password")
-    public ResponseEntity updateUserPassword(@RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest,HttpSession session){
+    public ResponseEntity updateUserPassword(@RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest, HttpSession session) {
         ResponseEntity<LoginResponse> responseEntity = null;
-        String id = SessionUtil.getLoginMemberId(session);
-        if (id == null){
-            id = SessionUtil.getLoginAdminId(session);
-        }
-
-        if(id == null){
-            return new ResponseEntity<>(null,HttpStatus.UNAUTHORIZED);
-        }
+        String userId = getLoginUserId(session);
 
         String beforePassword = userUpdatePasswordRequest.getBeforePassword();
         String afterPassword = userUpdatePasswordRequest.getAfterPassword();
 
-        try{
-            userService.updatePassword(id,beforePassword,afterPassword);
+        try {
+            userService.updatePassword(userId, beforePassword, afterPassword);
             responseEntity = new ResponseEntity<>(HttpStatus.OK);
-        } catch (RuntimeException e){
+        } catch (RuntimeException e) {
             log.error("updatePassword 실패 ", e);
-            responseEntity = new ResponseEntity<LoginResponse>(HttpStatus.BAD_REQUEST);
+            responseEntity = new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
         return responseEntity;
     }
 
     @DeleteMapping("delete")
-    public ResponseEntity delete(@RequestBody UserDeleteRequest userDeleteId, HttpSession session){
+    public ResponseEntity delete(@RequestBody UserDeleteRequest userDeleteId, HttpSession session) {
         ResponseEntity<LoginResponse> responseEntity = null;
 
-        String id = SessionUtil.getLoginMemberId(session);
-        if (id == null){
-            id = SessionUtil.getLoginAdminId(session);
-        }
+        String userId = getLoginUserId(session);
 
-        if(id == null){
-            return new ResponseEntity<>(null,HttpStatus.UNAUTHORIZED);
-        }
-
-        try{
-            userService.delete(id, userDeleteId.getPassword());
-            responseEntity = new ResponseEntity<>(HttpStatus.OK);
-        } catch (RuntimeException e){
+        try {
+            userService.delete(userId, userDeleteId.getPassword());
+            clearLoginSession(session);
+            responseEntity = new ResponseEntity(HttpStatus.OK);
+        } catch (RuntimeException e) {
             log.error("deleteId 실패");
-            responseEntity = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            responseEntity = new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
         return responseEntity;
