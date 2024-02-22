@@ -8,15 +8,15 @@
 
 - Language: JAVA 17
 - Framework: Spring Boot 3.2.2
-- DB: MySQL (MyBatis), Redis
+- DB: MySQL (Spring Data JPA), Redis
 
 ## 프로그램 주요 기능
 
-- [ ] 회원
-  - [ ] 가입, 탈퇴
-  - [ ] 아이디 및 닉네임 중복체크
-  - [ ] 비밀번호 암호화
-  - [ ] 로그인, 로그아웃
+- [x] 회원
+  - [x] 가입, 탈퇴
+  - [x] 아이디 및 닉네임 중복체크
+  - [x] 비밀번호 암호화
+  - [x] 로그인, 로그아웃
 - [ ] 게시판
   - [ ] 카테고리 관리
     - [ ] 추가, 삭제, 수정
