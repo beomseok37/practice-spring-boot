@@ -8,33 +8,20 @@ public class SessionUtil {
     private static final String LOGIN_MEMBER_ID = "LOGIN_MEMBER_ID";
     private static final String LOGIN_ADMIN_ID = "LOGIN_ADMIN_ID";
 
-    private static String getLoginDefaultId(HttpSession session) {
+    public static String getLoginMemberId(HttpSession session) {
         return (String) session.getAttribute(LOGIN_MEMBER_ID);
     }
-    public static void setLoginMemberId(HttpSession session, String id) {
+    private static void setLoginMemberId(HttpSession session, String id) {
         session.setAttribute(LOGIN_MEMBER_ID, id);
     }
-    private static String getLoginAdminId(HttpSession session) {
+    public static String getLoginAdminId(HttpSession session) {
         return (String) session.getAttribute(LOGIN_ADMIN_ID);
     }
-    public static void setLoginAdminId(HttpSession session, String id) {
+    private static void setLoginAdminId(HttpSession session, String id) {
         session.setAttribute(LOGIN_ADMIN_ID, id);
     }
     public static void clearLoginSession(HttpSession session) {
         session.invalidate();
-    }
-
-    public static String getLoginUserId(HttpSession session){
-        String userId = getLoginDefaultId(session);
-        if (userId == null){
-            userId = getLoginAdminId(session);
-        }
-
-        if (userId == null){
-            throw new IllegalStateException("세션이 존재하지 않습니다.");
-        }
-
-        return userId;
     }
 
     public static void setLoginUserId(HttpSession session, UserDTO userInfo){
