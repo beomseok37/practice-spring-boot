@@ -2,7 +2,7 @@ package dev.beomseok.boardserver.service;
 
 import dev.beomseok.boardserver.domain.User;
 import dev.beomseok.boardserver.dto.UserDTO;
-import dev.beomseok.boardserver.dto.request.UserSignUpDto;
+import dev.beomseok.boardserver.dto.request.UserSignUpRequest;
 import dev.beomseok.boardserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -21,13 +21,13 @@ public class UserServiceImpl implements UserService{
 
     @Override
     @Transactional
-    public void register(UserSignUpDto userSignUpDto) {
-        if(isDuplicatedId(userSignUpDto.getUserId())){
+    public void register(UserSignUpRequest userSignUpRequest) {
+        if(isDuplicatedId(userSignUpRequest.getUserId())){
             throw new IllegalArgumentException("중복된 아이디입니다.");
         }
 
-        userSignUpDto.setPassword(encryptSHA245(userSignUpDto.getPassword()));
-        User user = User.createUser(userSignUpDto);
+        userSignUpRequest.setPassword(encryptSHA245(userSignUpRequest.getPassword()));
+        User user = User.createUser(userSignUpRequest);
         User savedUser = userRepository.save(user);
 
         if (savedUser == null){

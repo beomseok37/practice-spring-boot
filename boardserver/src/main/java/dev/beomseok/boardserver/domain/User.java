@@ -1,10 +1,8 @@
 package dev.beomseok.boardserver.domain;
 
-import dev.beomseok.boardserver.dto.request.UserSignUpDto;
+import dev.beomseok.boardserver.dto.request.UserSignUpRequest;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
@@ -28,12 +26,12 @@ public class User extends BaseEntity{
     private UserStatus status;
 
     //== 생성자 메서드 ==//
-    public static User createUser(UserSignUpDto userSignUpDto){
+    public static User createUser(UserSignUpRequest userSignUpRequest){
         User user = new User();
-        user.setUserId(userSignUpDto.getUserId());
-        user.setPassword(userSignUpDto.getPassword());
-        user.setNickname(userSignUpDto.getNickname());
-        user.setStatus(userSignUpDto.getIsAdmin() ? UserStatus.ADMIN : UserStatus.DEFAULT);
+        user.setUserId(userSignUpRequest.getUserId());
+        user.setPassword(userSignUpRequest.getPassword());
+        user.setNickname(userSignUpRequest.getNickname());
+        user.setStatus(userSignUpRequest.getIsAdmin() ? UserStatus.ADMIN : UserStatus.DEFAULT);
 
         return user;
     }
