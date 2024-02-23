@@ -1,9 +1,9 @@
 package dev.beomseok.boardserver.controller;
 
 import dev.beomseok.boardserver.dto.UserDTO;
-import dev.beomseok.boardserver.dto.request.UserLoginInfoRequest;
-import dev.beomseok.boardserver.dto.request.UserSignUpRequest;
-import dev.beomseok.boardserver.dto.request.UserUpdatePasswordRequest;
+import dev.beomseok.boardserver.dto.request.LoginInfoRequest;
+import dev.beomseok.boardserver.dto.request.SignUpRequest;
+import dev.beomseok.boardserver.dto.request.UpdatePasswordRequest;
 import dev.beomseok.boardserver.dto.response.LoginResponse;
 import dev.beomseok.boardserver.dto.response.ResponseBody;
 import dev.beomseok.boardserver.service.UserService;
@@ -27,13 +27,13 @@ public class UserController {
     static LoginResponse loginResponse = null;
 
     @PostMapping("sign-up")
-    public ResponseEntity signUp(@Valid @RequestBody UserSignUpRequest userSignUpRequest) {
+    public ResponseEntity signUp(@Valid @RequestBody SignUpRequest userSignUpRequest) {
         userService.register(userSignUpRequest);
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
     @PostMapping("sign-in")
-    public ResponseEntity<ResponseBody<UserDTO>> login(@Valid @RequestBody UserLoginInfoRequest request,
+    public ResponseEntity<ResponseBody<UserDTO>> login(@Valid @RequestBody LoginInfoRequest request,
                                                        HttpSession session) {
 
         UserDTO userInfo = userService.login(request.getUserId(), request.getPassword());
@@ -57,23 +57,23 @@ public class UserController {
     }
 
     @PatchMapping("password")
-    public ResponseEntity updateUserPassword(@Valid @RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest,
+    public ResponseEntity updateUserPassword(@Valid @RequestBody UpdatePasswordRequest updatePasswordRequest,
                                              HttpSession session) {
         String userId = getLoginUserId(session);
 
-        String beforePassword = userUpdatePasswordRequest.getBeforePassword();
-        String afterPassword = userUpdatePasswordRequest.getAfterPassword();
+        String beforePassword = updatePasswordRequest.getBeforePassword();
+        String afterPassword = updatePasswordRequest.getAfterPassword();
 
         userService.updatePassword(userId, beforePassword, afterPassword);
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @DeleteMapping("delete")
-    public ResponseEntity delete(@Valid @RequestBody UserLoginInfoRequest userLoginInfoRequest,
+    public ResponseEntity delete(@Valid @RequestBody LoginInfoRequest loginInfoRequest,
                                  HttpSession session) {
         String userId = getLoginUserId(session);
 
-        userService.delete(userId, userLoginInfoRequest.getPassword());
+        userService.delete(userId, loginInfoRequest.getPassword());
         clearLoginSession(session);
 
         return new ResponseEntity(HttpStatus.OK);

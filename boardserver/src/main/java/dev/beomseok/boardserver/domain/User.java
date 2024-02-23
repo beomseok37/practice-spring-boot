@@ -1,6 +1,6 @@
 package dev.beomseok.boardserver.domain;
 
-import dev.beomseok.boardserver.dto.request.UserSignUpRequest;
+import dev.beomseok.boardserver.dto.request.SignUpRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,7 +26,7 @@ public class User extends BaseEntity{
     private UserStatus status;
 
     //== 생성자 메서드 ==//
-    public static User createUser(UserSignUpRequest userSignUpRequest){
+    public static User createUser(SignUpRequest userSignUpRequest){
         User user = new User();
         user.setUserId(userSignUpRequest.getUserId());
         user.setPassword(userSignUpRequest.getPassword());

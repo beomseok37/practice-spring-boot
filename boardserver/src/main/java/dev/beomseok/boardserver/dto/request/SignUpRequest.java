@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class UserSignUpRequest extends UserLoginInfoRequest{
+public class SignUpRequest extends LoginInfoRequest {
     @NotBlank(message = "닉네임이 비어 있습니다.")
     private String nickname;
 

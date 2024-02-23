@@ -1,11 +1,11 @@
 package dev.beomseok.boardserver.service;
 
 import dev.beomseok.boardserver.dto.UserDTO;
-import dev.beomseok.boardserver.dto.request.UserSignUpRequest;
+import dev.beomseok.boardserver.dto.request.SignUpRequest;
 
 public interface UserService {
 
-    void register(UserSignUpRequest userSignUpRequest);
+    void register(SignUpRequest userSignUpRequest);
 
     UserDTO login(String id, String password);
 
