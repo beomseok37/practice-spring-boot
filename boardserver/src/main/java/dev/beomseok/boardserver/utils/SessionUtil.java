@@ -2,10 +2,7 @@ package dev.beomseok.boardserver.utils;
 
 import dev.beomseok.boardserver.domain.User;
 import dev.beomseok.boardserver.dto.UserDTO;
-import dev.beomseok.boardserver.exception.SessionNotExistException;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 public class SessionUtil {
     private static final String LOGIN_MEMBER_ID = "LOGIN_MEMBER_ID";
@@ -34,7 +31,7 @@ public class SessionUtil {
         }
 
         if (userId == null){
-            throw new SessionNotExistException("세션이 존재하지 않습니다.");
+            throw new IllegalStateException("세션이 존재하지 않습니다.");
         }
 
         return userId;
