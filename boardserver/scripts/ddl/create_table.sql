@@ -1,3 +1,5 @@
+DROP TABLE IF EXISTS file;
+DROP TABLE IF EXISTS post;
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS category;
 
@@ -19,4 +21,31 @@ CREATE TABLE category
     status        VARCHAR(10) NOT NULL,
     created_date  DATETIME    NOT NULL,
     modified_date DATETIME    NOT NULL
+);
+
+CREATE TABLE post
+(
+    id          BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    title        VARCHAR(45)  NOT NULL,
+    is_admin    BOOLEAN      NOT NULL,
+    content     VARCHAR(200) NOT NULL,
+    views       INT          NOT NULL,
+    created_date  DATETIME    NOT NULL,
+    modified_date DATETIME    NOT NULL,
+    category_id BIGINT       NOT NULL,
+    user_id     BIGINT       NOT NULL,
+    FOREIGN KEY (category_id) REFERENCES category (id),
+    FOREIGN KEY (user_id) REFERENCES user (id)
+);
+
+CREATE TABLE file
+(
+    id        BIGINT      NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name      varchar(45) NOT NULL,
+    path      varchar(45) NOT NULL,
+    extension varchar(45) NOT NULL,
+    post_id   BIGINT      NOT NULL,
+    created_date  DATETIME    NOT NULL,
+    modified_date DATETIME    NOT NULL,
+    FOREIGN KEY (post_id) REFERENCES post (id)
 );
