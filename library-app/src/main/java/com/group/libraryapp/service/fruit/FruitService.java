@@ -1,11 +1,9 @@
 package com.group.libraryapp.service.fruit;
 
-import com.group.libraryapp.domain.fruit.Fruit;
 import com.group.libraryapp.dto.fruit.FruitCreateRequest;
+import com.group.libraryapp.dto.fruit.FruitStatResponse;
 import com.group.libraryapp.repository.fruit.FruitRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class FruitService {
@@ -25,7 +23,7 @@ public class FruitService {
         fruitRepository.updateFruit(fruitId);
     }
 
-    public List<Fruit> getFruitByName(String fruitName) {
+    public FruitStatResponse getFruitByName(String fruitName) {
         return fruitRepository.findPriceInfoByName(fruitName);
     }
 

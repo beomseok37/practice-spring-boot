@@ -1,13 +1,11 @@
 package com.group.libraryapp.controller.fruit;
 
-import com.group.libraryapp.domain.fruit.Fruit;
 import com.group.libraryapp.dto.fruit.FruitCreateRequest;
 import com.group.libraryapp.dto.fruit.FruitStatResponse;
 import com.group.libraryapp.service.fruit.FruitService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,21 +19,20 @@ public class FruitController {
 
     @PostMapping("/api/v1/fruit")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createFruit(@RequestBody FruitCreateRequest request){
+    public void createFruit(@RequestBody FruitCreateRequest request) {
         fruitService.registerFruit(request);
     }
 
     @PutMapping("/api/v1/fruit")
-    public void sellFruit(@RequestBody Map<String, Long> request){
-        if(!request.containsKey("id")){
-            throw new IllegalArgumentException("해당 id의 과일이 존재하지 않습니다.");
+    public void sellFruit(@RequestBody Map<String, Long> request) {
+        if (!request.containsKey("id")) {
+            throw new IllegalArgumentException("옳바르지 않은 data 형식입니다.");
         }
         fruitService.sellFruit(request.get("id"));
     }
 
     @GetMapping("/api/v1/fruit/stat")
-    public FruitStatResponse getFruitStat(@RequestParam String name){
-        List<Fruit> filteredFruits = fruitService.getFruitByName(name);
-        return new FruitStatResponse(filteredFruits);
+    public FruitStatResponse getFruitStat(@RequestParam String name) {
+        return fruitService.getFruitByName(name);
     }
 }
