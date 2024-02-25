@@ -2,12 +2,14 @@ package dev.beomseok.boardserver.service;
 
 import com.querydsl.core.NonUniqueResultException;
 import dev.beomseok.boardserver.domain.Category;
+import dev.beomseok.boardserver.domain.File;
 import dev.beomseok.boardserver.domain.Post;
 import dev.beomseok.boardserver.domain.User;
 import dev.beomseok.boardserver.dto.FileDTO;
 import dev.beomseok.boardserver.dto.PostDTO;
 import dev.beomseok.boardserver.dto.request.PostRequest;
 import dev.beomseok.boardserver.repository.CategoryRepository;
+import dev.beomseok.boardserver.repository.FileRepository;
 import dev.beomseok.boardserver.repository.PostRepository;
 import dev.beomseok.boardserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class PostServieImpl implements PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final FileRepository fileRepository;
 
     @Override
     @Transactional
@@ -31,8 +34,13 @@ public class PostServieImpl implements PostService {
         User user = userRepository.findOneByUserId(userId);
         Category category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 카테고리가 없습니다."));
+
         Post post = Post.createPost(request, user, category);
         postRepository.save(post);
+
+        List<File> files = request.getFiles().stream()
+                .map(fileDTO -> new File(fileDTO, post)).collect(Collectors.toList());
+        fileRepository.saveAll(files);
     }
 
     @Override
