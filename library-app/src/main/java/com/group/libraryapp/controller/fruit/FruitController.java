@@ -3,34 +3,39 @@ package com.group.libraryapp.controller.fruit;
 import com.group.libraryapp.domain.fruit.Fruit;
 import com.group.libraryapp.dto.fruit.FruitCreateRequest;
 import com.group.libraryapp.dto.fruit.FruitStatResponse;
+import com.group.libraryapp.service.fruit.FruitService;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 public class FruitController {
-    List<Fruit> fruits = new ArrayList<>();
+
+    private final FruitService fruitService;
+
+    public FruitController(FruitService fruitService) {
+        this.fruitService = fruitService;
+    }
 
     @PostMapping("/api/v1/fruit")
+    @ResponseStatus(HttpStatus.CREATED)
     public void createFruit(@RequestBody FruitCreateRequest request){
-        fruits.add(new Fruit(request));
+        fruitService.registerFruit(request);
     }
 
     @PutMapping("/api/v1/fruit")
     public void sellFruit(@RequestBody Map<String, Long> request){
-        fruits.stream().forEach(fruit -> {
-            if(request.get("id")==fruit.getId()){
-                fruit.sellFruit();
-            }
-        });
+        if(!request.containsKey("id")){
+            throw new IllegalArgumentException("해당 id의 과일이 존재하지 않습니다.");
+        }
+        fruitService.sellFruit(request.get("id"));
     }
 
     @GetMapping("/api/v1/fruit/stat")
     public FruitStatResponse getFruitStat(@RequestParam String name){
-        List<Fruit> filteredFruits = fruits.stream().filter(fruit -> fruit.getName().equals(name)).collect(Collectors.toList());
+        List<Fruit> filteredFruits = fruitService.getFruitByName(name);
         return new FruitStatResponse(filteredFruits);
     }
 }
