@@ -6,12 +6,12 @@ import com.group.libraryapp.repository.fruit.FruitRepository;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FruitService {
+public class FruitServiceV1 {
 
     private final FruitRepository fruitRepository;
 
 
-    public FruitService(FruitRepository fruitRepository) {
+    public FruitServiceV1(FruitRepository fruitRepository) {
         this.fruitRepository = fruitRepository;
     }
 

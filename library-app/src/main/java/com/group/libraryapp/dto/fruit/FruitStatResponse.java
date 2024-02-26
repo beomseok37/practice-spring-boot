@@ -1,7 +1,5 @@
 package com.group.libraryapp.dto.fruit;
 
-import com.group.libraryapp.domain.fruit.Fruit;
-
 import java.util.List;
 
 public class FruitStatResponse {
@@ -22,14 +20,14 @@ public class FruitStatResponse {
         this.notSalesAmount += notSalesAmount;
     }
 
-    public static FruitStatResponse createFruitStatMemory(List<Fruit> filteredFruits) {
+    public static FruitStatResponse createFruitStatMemory(List<FruitJdbc> filteredFruitJdbcs) {
         FruitStatResponse fruitStatResponse = new FruitStatResponse(0, 0);
 
-        filteredFruits.stream().forEach((fruit -> {
-            if (fruit.isSold()) {
-                fruitStatResponse.addSalesAmount(fruit.getPrice());
+        filteredFruitJdbcs.stream().forEach((fruitJdbc -> {
+            if (fruitJdbc.isSold()) {
+                fruitStatResponse.addSalesAmount(fruitJdbc.getPrice());
             } else {
-                fruitStatResponse.addNotSalesAmount(fruit.getPrice());
+                fruitStatResponse.addNotSalesAmount(fruitJdbc.getPrice());
             }
         }));
 

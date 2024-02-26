@@ -1,28 +1,17 @@
-package com.group.libraryapp.domain.fruit;
+package com.group.libraryapp.dto.fruit;
 
-import com.group.libraryapp.dto.fruit.FruitCreateRequest;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import java.time.LocalDate;
 
-@Entity
-public class Fruit {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class FruitJdbc {
     private String name;
     private LocalDate warehousingDate;
     private long price;
     private boolean isSold;
 
-    public Fruit() {
+    public FruitJdbc() {
     }
 
-    public Fruit(FruitCreateRequest request) {
+    public FruitJdbc(FruitCreateRequest request) {
         this.name = request.getName();
         this.warehousingDate = request.getWarehousingDate();
         this.price = request.getPrice();

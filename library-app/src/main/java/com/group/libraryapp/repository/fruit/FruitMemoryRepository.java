@@ -1,8 +1,8 @@
 package com.group.libraryapp.repository.fruit;
 
-import com.group.libraryapp.domain.fruit.Fruit;
 import com.group.libraryapp.dto.fruit.FruitCreateRequest;
-import com.group.libraryapp.dto.fruit.FruitDTO;
+import com.group.libraryapp.dto.fruit.FruitJdbc;
+import com.group.libraryapp.dto.fruit.FruitMemory;
 import com.group.libraryapp.dto.fruit.FruitStatResponse;
 import org.springframework.stereotype.Repository;
 
@@ -13,12 +13,12 @@ import java.util.stream.Collectors;
 @Repository
 public class FruitMemoryRepository implements FruitRepository {
 
-    List<FruitDTO> fruits = new ArrayList<>();
+    List<FruitMemory> fruits = new ArrayList<>();
 
 
     @Override
     public void registerFruit(FruitCreateRequest request) {
-        fruits.add(new FruitDTO(request));
+        fruits.add(new FruitMemory(request));
     }
 
     @Override
@@ -32,11 +32,11 @@ public class FruitMemoryRepository implements FruitRepository {
 
     @Override
     public FruitStatResponse findPriceInfoByName(String fruitName) {
-        List<Fruit> filteredFruits = fruits.stream()
+        List<FruitJdbc> filteredFruitJdbcs = fruits.stream()
                 .filter(fruit -> fruit.getName().equals(fruitName))
                 .collect(Collectors.toList());
 
-        return FruitStatResponse.createFruitStatMemory(filteredFruits);
+        return FruitStatResponse.createFruitStatMemory(filteredFruitJdbcs);
     }
 
     @Override

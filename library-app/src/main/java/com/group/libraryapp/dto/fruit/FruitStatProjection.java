@@ -4,6 +4,11 @@ public class FruitStatProjection {
     private long price;
     private boolean is_sold;
 
+    public FruitStatProjection(long price, boolean is_sold) {
+        this.price = price;
+        this.is_sold = is_sold;
+    }
+
     public long getPrice() {
         return price;
     }
