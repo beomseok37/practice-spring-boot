@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter @Getter
 public class User extends BaseEntity{
     public static enum UserStatus{
-        DEFAULT, ADMIN, DELETED
+        MEMBER, ADMIN, DELETED
     }
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,7 @@ public class User extends BaseEntity{
         user.setUserId(userSignUpRequest.getUserId());
         user.setPassword(userSignUpRequest.getPassword());
         user.setNickname(userSignUpRequest.getNickname());
-        user.setStatus(userSignUpRequest.getIsAdmin() ? UserStatus.ADMIN : UserStatus.DEFAULT);
+        user.setStatus(userSignUpRequest.getIsAdmin() ? UserStatus.ADMIN : UserStatus.MEMBER);
 
         return user;
     }

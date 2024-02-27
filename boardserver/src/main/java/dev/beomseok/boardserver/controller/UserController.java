@@ -1,5 +1,6 @@
 package dev.beomseok.boardserver.controller;
 
+import dev.beomseok.boardserver.aop.LoginCheck;
 import dev.beomseok.boardserver.dto.UserDTO;
 import dev.beomseok.boardserver.dto.request.LoginInfoRequest;
 import dev.beomseok.boardserver.dto.request.SignUpRequest;
@@ -43,9 +44,8 @@ public class UserController {
     }
 
     @GetMapping("my-info")
-    public ResponseEntity<ResponseBody<UserDTO>> memberInfo(HttpSession session) {
-        String userId = getLoginUserId(session);
-
+    @LoginCheck(type = LoginCheck.UserType.MEMBER)
+    public ResponseEntity<ResponseBody<UserDTO>> memberInfo(String userId) {
         UserDTO userInfo = userService.getUserInfo(userId);
         return ResponseBody.createSuccessResponse(HttpStatus.OK, userInfo);
     }
@@ -57,10 +57,8 @@ public class UserController {
     }
 
     @PatchMapping("password")
-    public ResponseEntity updateUserPassword(@Valid @RequestBody UpdatePasswordRequest updatePasswordRequest,
-                                             HttpSession session) {
-        String userId = getLoginUserId(session);
-
+    @LoginCheck(type = LoginCheck.UserType.MEMBER)
+    public ResponseEntity updateUserPassword(String userId, @Valid @RequestBody UpdatePasswordRequest updatePasswordRequest) {
         String beforePassword = updatePasswordRequest.getBeforePassword();
         String afterPassword = updatePasswordRequest.getAfterPassword();
 
@@ -69,9 +67,8 @@ public class UserController {
     }
 
     @DeleteMapping("delete")
-    public ResponseEntity delete(@Valid @RequestBody LoginInfoRequest loginInfoRequest,
-                                 HttpSession session) {
-        String userId = getLoginUserId(session);
+    @LoginCheck(type = LoginCheck.UserType.MEMBER)
+    public ResponseEntity delete(String userId, @Valid @RequestBody LoginInfoRequest loginInfoRequest, HttpSession session) {
 
         userService.delete(userId, loginInfoRequest.getPassword());
         clearLoginSession(session);
