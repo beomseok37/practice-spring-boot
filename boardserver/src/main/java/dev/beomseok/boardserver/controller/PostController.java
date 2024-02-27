@@ -1,10 +1,9 @@
 package dev.beomseok.boardserver.controller;
 
+import dev.beomseok.boardserver.aop.LoginCheck;
 import dev.beomseok.boardserver.dto.PostDTO;
 import dev.beomseok.boardserver.dto.request.PostRequest;
 import dev.beomseok.boardserver.service.PostService;
-import dev.beomseok.boardserver.utils.SessionUtil;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -19,27 +18,27 @@ public class PostController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void registerPost(HttpSession session, @RequestBody PostRequest postRequest) {
-        String userId = SessionUtil.getLoginUserId(session);
+    @LoginCheck(type = LoginCheck.UserType.MEMBER)
+    public void registerPost(String userId, @RequestBody PostRequest postRequest) {
         postService.registerPost(userId, postRequest);
     }
 
     @GetMapping
-    public List<PostDTO> postInfo(HttpSession session) {
-        String userId = SessionUtil.getLoginUserId(session);
+    @LoginCheck(type = LoginCheck.UserType.MEMBER)
+    public List<PostDTO> postInfo(String userId) {
         List<PostDTO> posts = postService.getPosts(userId);
         return posts;
     }
 
     @PatchMapping("{postId}")
-    public void updatePost(HttpSession session, @PathVariable("postId") Long postId, @RequestBody PostRequest postRequest) {
-        String userId = SessionUtil.getLoginUserId(session);
+    @LoginCheck(type = LoginCheck.UserType.MEMBER)
+    public void updatePost(String userId, @PathVariable("postId") Long postId, @RequestBody PostRequest postRequest) {
         postService.updatePost(userId, postId, postRequest);
     }
 
     @DeleteMapping("{postId}")
-    public void updatePost(HttpSession session, @PathVariable("postId") Long postId) {
-        String userId = SessionUtil.getLoginUserId(session);
+    @LoginCheck(type = LoginCheck.UserType.MEMBER)
+    public void updatePost(String userId, @PathVariable("postId") Long postId) {
         postService.deletePost(userId, postId);
     }
 
