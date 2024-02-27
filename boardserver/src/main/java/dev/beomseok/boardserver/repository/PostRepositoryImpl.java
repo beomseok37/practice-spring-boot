@@ -2,6 +2,8 @@ package dev.beomseok.boardserver.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dev.beomseok.boardserver.domain.Post;
+import dev.beomseok.boardserver.dto.post.PostSearch;
+import dev.beomseok.boardserver.utils.PostSearchUtil;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -29,5 +31,15 @@ public class PostRepositoryImpl implements PostCustomRepository {
                 .join(post.user, user).fetchJoin()
                 .where(post.id.eq(postId))
                 .fetchOne();
+    }
+
+    @Override
+    public List<Post> findBySearch(PostSearch postSearch) {
+        return queryFactory.selectFrom(post)
+                .join(post.files).fetchJoin()
+                .join(post.user).fetchJoin()
+                .where(PostSearchUtil.allCondition(postSearch))
+                .orderBy(PostSearchUtil.orderCondition(postSearch.getSortStatus()))
+                .fetch();
     }
 }

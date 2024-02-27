@@ -19,7 +19,7 @@ public class CategoryController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void registerCategory(@RequestBody CategoryRequest request) {
-        CategoryDTO categoryDTO = new CategoryDTO(request.getName(), Category.SortStatus.CREATED);
+        CategoryDTO categoryDTO = new CategoryDTO(request.getName(), Category.SortStatus.CATEGORIES);
         categoryService.register(categoryDTO);
     }
 

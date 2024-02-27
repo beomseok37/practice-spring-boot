@@ -3,6 +3,7 @@ package dev.beomseok.boardserver.controller;
 import dev.beomseok.boardserver.aop.LoginCheck;
 import dev.beomseok.boardserver.dto.post.PostDTO;
 import dev.beomseok.boardserver.dto.post.PostRequest;
+import dev.beomseok.boardserver.dto.post.PostSearch;
 import dev.beomseok.boardserver.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,11 @@ public class PostController {
         return posts;
     }
 
+    @PostMapping("/search")
+    public List<PostDTO> searchPosts(@RequestBody PostSearch postSearch) {
+        return postService.getPosts(postSearch);
+    }
+
     @PatchMapping("{postId}")
     @LoginCheck(type = LoginCheck.UserType.MEMBER)
     public void updatePost(String userId, @PathVariable("postId") Long postId, @RequestBody PostRequest postRequest) {
@@ -41,5 +47,4 @@ public class PostController {
     public void updatePost(String userId, @PathVariable("postId") Long postId) {
         postService.deletePost(userId, postId);
     }
-
 }

@@ -17,7 +17,7 @@ public class Post extends BaseEntity {
     private Long id;
 
     private String title;
-    private boolean isAdmin;
+    private Boolean isAdmin;
     private String content;
     private int views;
 
@@ -45,7 +45,7 @@ public class Post extends BaseEntity {
     public static Post createPost(PostRequest postRequest, User user, Category category) {
         return new Post(
                 postRequest.getTitle(),
-                postRequest.isAdmin(),
+                postRequest.getIsAdmin(),
                 postRequest.getContent(),
                 0,
                 user,

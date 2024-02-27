@@ -6,12 +6,13 @@ import lombok.Setter;
 
 @Entity
 @Setter
-public class Category extends BaseEntity{
+public class Category extends BaseEntity {
     public static enum SortStatus {
-        CREATED, NEWEST, OLDEST
+        CATEGORIES, NEWEST, OLDEST
     }
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
     String name;
@@ -21,7 +22,7 @@ public class Category extends BaseEntity{
     SortStatus status;
 
     //==생성자 메서드==//
-    public static Category createCategory(CategoryDTO categoryDTO){
+    public static Category createCategory(CategoryDTO categoryDTO) {
         Category category = new Category();
         category.setName(categoryDTO.getName());
         category.setStatus(categoryDTO.getStatus());
@@ -29,7 +30,7 @@ public class Category extends BaseEntity{
     }
 
     //==수정 메서드==//
-    public void update(CategoryDTO categoryDTO){
+    public void update(CategoryDTO categoryDTO) {
         this.name = categoryDTO.getName();
         this.status = categoryDTO.getStatus();
     }

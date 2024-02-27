@@ -8,7 +8,7 @@ import java.util.List;
 public class PostRequest {
     private String title;
     private String content;
-    private boolean isAdmin;
+    private Boolean isAdmin;
     private long categoryId;
     private List<FileDTO> files;
 }

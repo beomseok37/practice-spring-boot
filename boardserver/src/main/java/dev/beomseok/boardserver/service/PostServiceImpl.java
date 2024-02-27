@@ -8,11 +8,13 @@ import dev.beomseok.boardserver.domain.User;
 import dev.beomseok.boardserver.dto.post.FileDTO;
 import dev.beomseok.boardserver.dto.post.PostDTO;
 import dev.beomseok.boardserver.dto.post.PostRequest;
+import dev.beomseok.boardserver.dto.post.PostSearch;
 import dev.beomseok.boardserver.repository.CategoryRepository;
 import dev.beomseok.boardserver.repository.FileRepository;
 import dev.beomseok.boardserver.repository.PostRepository;
 import dev.beomseok.boardserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-public class PostServieImpl implements PostService {
+public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
@@ -46,14 +48,14 @@ public class PostServieImpl implements PostService {
     @Override
     public List<PostDTO> getPosts(String userId) {
         List<Post> posts = postRepository.findPosts(userId);
-        return posts.stream().map(post -> {
-            List<FileDTO> files = post.getFiles().stream()
-                    .map(file -> new FileDTO(file.getName(), file.getPath(), file.getExtension()))
-                    .collect(Collectors.toList());
+        return PostDTO.postToDTO(posts);
+    }
 
-            return new PostDTO(post.getUser().getUserId(), post.getTitle(), post.getContent(),
-                    post.getCreatedDate(), post.getModifiedDate(), post.getViews(), files);
-        }).collect(Collectors.toList());
+    @Override
+    @Cacheable(value = "getPosts", key = "'getPosts' + #postSearch.getTitle() + #postSearch.getCategoryId()")
+    public List<PostDTO> getPosts(PostSearch postSearch) {
+        List<Post> posts = postRepository.findBySearch(postSearch);
+        return PostDTO.postToDTO(posts);
     }
 
     @Override
@@ -88,4 +90,6 @@ public class PostServieImpl implements PostService {
         }
 
     }
+
+
 }
