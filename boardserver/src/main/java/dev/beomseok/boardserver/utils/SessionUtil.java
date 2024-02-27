@@ -1,7 +1,7 @@
 package dev.beomseok.boardserver.utils;
 
 import dev.beomseok.boardserver.domain.User;
-import dev.beomseok.boardserver.dto.UserDTO;
+import dev.beomseok.boardserver.dto.user.UserDTO;
 import jakarta.servlet.http.HttpSession;
 
 public class SessionUtil {

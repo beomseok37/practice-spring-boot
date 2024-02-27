@@ -1,12 +1,12 @@
 package dev.beomseok.boardserver.controller;
 
 import dev.beomseok.boardserver.aop.LoginCheck;
-import dev.beomseok.boardserver.dto.UserDTO;
-import dev.beomseok.boardserver.dto.request.LoginInfoRequest;
-import dev.beomseok.boardserver.dto.request.SignUpRequest;
-import dev.beomseok.boardserver.dto.request.UpdatePasswordRequest;
-import dev.beomseok.boardserver.dto.response.LoginResponse;
-import dev.beomseok.boardserver.dto.response.ResponseBody;
+import dev.beomseok.boardserver.dto.user.UserDTO;
+import dev.beomseok.boardserver.dto.user.LoginInfoRequest;
+import dev.beomseok.boardserver.dto.user.SignUpRequest;
+import dev.beomseok.boardserver.dto.user.UpdatePasswordRequest;
+import dev.beomseok.boardserver.dto.user.LoginResponse;
+import dev.beomseok.boardserver.dto.common.ResponseBody;
 import dev.beomseok.boardserver.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;

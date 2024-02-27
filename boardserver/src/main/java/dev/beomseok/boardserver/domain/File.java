@@ -1,11 +1,9 @@
 package dev.beomseok.boardserver.domain;
 
-import dev.beomseok.boardserver.dto.FileDTO;
+import dev.beomseok.boardserver.dto.post.FileDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Entity
 @Getter

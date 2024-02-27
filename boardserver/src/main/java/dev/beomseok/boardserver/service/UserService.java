@@ -1,7 +1,7 @@
 package dev.beomseok.boardserver.service;
 
-import dev.beomseok.boardserver.dto.UserDTO;
-import dev.beomseok.boardserver.dto.request.SignUpRequest;
+import dev.beomseok.boardserver.dto.user.UserDTO;
+import dev.beomseok.boardserver.dto.user.SignUpRequest;
 
 public interface UserService {
 

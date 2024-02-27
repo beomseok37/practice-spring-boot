@@ -1,7 +1,7 @@
 package dev.beomseok.boardserver.service;
 
-import dev.beomseok.boardserver.dto.PostDTO;
-import dev.beomseok.boardserver.dto.request.PostRequest;
+import dev.beomseok.boardserver.dto.post.PostDTO;
+import dev.beomseok.boardserver.dto.post.PostRequest;
 
 import java.util.List;
 

@@ -1,6 +1,5 @@
-package dev.beomseok.boardserver.dto.response;
+package dev.beomseok.boardserver.dto.user;
 
-import dev.beomseok.boardserver.dto.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;

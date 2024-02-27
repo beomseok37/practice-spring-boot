@@ -1,4 +1,4 @@
-package dev.beomseok.boardserver.dto;
+package dev.beomseok.boardserver.dto.category;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

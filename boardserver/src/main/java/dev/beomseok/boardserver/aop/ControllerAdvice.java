@@ -1,6 +1,6 @@
 package dev.beomseok.boardserver.aop;
 
-import dev.beomseok.boardserver.dto.response.ResponseBody;
+import dev.beomseok.boardserver.dto.common.ResponseBody;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

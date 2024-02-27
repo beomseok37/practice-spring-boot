@@ -1,7 +1,7 @@
 package dev.beomseok.boardserver.service;
 
 import dev.beomseok.boardserver.domain.Category;
-import dev.beomseok.boardserver.dto.CategoryDTO;
+import dev.beomseok.boardserver.dto.category.CategoryDTO;
 import dev.beomseok.boardserver.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

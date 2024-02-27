@@ -1,6 +1,6 @@
 package dev.beomseok.boardserver.domain;
 
-import dev.beomseok.boardserver.dto.CategoryDTO;
+import dev.beomseok.boardserver.dto.category.CategoryDTO;
 import jakarta.persistence.*;
 import lombok.Setter;
 

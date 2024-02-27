@@ -1,4 +1,4 @@
-package dev.beomseok.boardserver.dto;
+package dev.beomseok.boardserver.dto.post;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Getter;

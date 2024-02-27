@@ -1,13 +1,10 @@
-package dev.beomseok.boardserver.dto;
+package dev.beomseok.boardserver.dto.user;
 
 import com.querydsl.core.annotations.QueryProjection;
-import dev.beomseok.boardserver.domain.User;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
-import java.util.Date;
 
 import static dev.beomseok.boardserver.domain.User.*;
 
@@ -21,7 +18,7 @@ public class UserDTO {
     private UserStatus status;
 
     @QueryProjection
-    public UserDTO(String userId, String nickname, UserStatus status){
+    public UserDTO(String userId, String nickname, UserStatus status) {
         this.userId = userId;
         this.nickName = nickname;
         this.status = status;

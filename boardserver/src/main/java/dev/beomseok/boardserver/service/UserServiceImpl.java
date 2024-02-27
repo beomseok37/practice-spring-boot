@@ -1,8 +1,8 @@
 package dev.beomseok.boardserver.service;
 
 import dev.beomseok.boardserver.domain.User;
-import dev.beomseok.boardserver.dto.UserDTO;
-import dev.beomseok.boardserver.dto.request.SignUpRequest;
+import dev.beomseok.boardserver.dto.user.UserDTO;
+import dev.beomseok.boardserver.dto.user.SignUpRequest;
 import dev.beomseok.boardserver.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

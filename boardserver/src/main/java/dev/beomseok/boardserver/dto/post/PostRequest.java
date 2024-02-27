@@ -1,6 +1,5 @@
-package dev.beomseok.boardserver.dto.request;
+package dev.beomseok.boardserver.dto.post;
 
-import dev.beomseok.boardserver.dto.FileDTO;
 import lombok.Getter;
 
 import java.util.List;

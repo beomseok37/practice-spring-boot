@@ -1,6 +1,6 @@
 package dev.beomseok.boardserver.service;
 
-import dev.beomseok.boardserver.dto.CategoryDTO;
+import dev.beomseok.boardserver.dto.category.CategoryDTO;
 
 public interface CategoryService {
     void register(CategoryDTO categoryDTO);

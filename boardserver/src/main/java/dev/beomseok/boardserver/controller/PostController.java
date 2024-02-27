@@ -1,8 +1,8 @@
 package dev.beomseok.boardserver.controller;
 
 import dev.beomseok.boardserver.aop.LoginCheck;
-import dev.beomseok.boardserver.dto.PostDTO;
-import dev.beomseok.boardserver.dto.request.PostRequest;
+import dev.beomseok.boardserver.dto.post.PostDTO;
+import dev.beomseok.boardserver.dto.post.PostRequest;
 import dev.beomseok.boardserver.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

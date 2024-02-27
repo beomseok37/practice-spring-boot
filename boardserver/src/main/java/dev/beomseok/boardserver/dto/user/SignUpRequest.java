@@ -1,4 +1,4 @@
-package dev.beomseok.boardserver.dto.request;
+package dev.beomseok.boardserver.dto.user;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

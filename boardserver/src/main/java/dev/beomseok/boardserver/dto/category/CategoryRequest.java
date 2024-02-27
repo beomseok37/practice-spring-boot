@@ -1,4 +1,4 @@
-package dev.beomseok.boardserver.dto.request;
+package dev.beomseok.boardserver.dto.category;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

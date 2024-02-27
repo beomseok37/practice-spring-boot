@@ -2,8 +2,8 @@ package dev.beomseok.boardserver.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dev.beomseok.boardserver.domain.User;
-import dev.beomseok.boardserver.dto.QUserDTO;
-import dev.beomseok.boardserver.dto.UserDTO;
+import dev.beomseok.boardserver.dto.user.QUserDTO;
+import dev.beomseok.boardserver.dto.user.UserDTO;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 

@@ -1,6 +1,6 @@
 package dev.beomseok.boardserver.domain;
 
-import dev.beomseok.boardserver.dto.request.PostRequest;
+import dev.beomseok.boardserver.dto.post.PostRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

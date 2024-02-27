@@ -1,6 +1,6 @@
 package dev.beomseok.boardserver.domain;
 
-import dev.beomseok.boardserver.dto.request.SignUpRequest;
+import dev.beomseok.boardserver.dto.user.SignUpRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
