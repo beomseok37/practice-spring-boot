@@ -7,7 +7,7 @@ import dev.beomseok.boardserver.dto.user.SignUpRequest;
 import dev.beomseok.boardserver.dto.user.UpdatePasswordRequest;
 import dev.beomseok.boardserver.dto.user.LoginResponse;
 import dev.beomseok.boardserver.dto.common.ResponseBody;
-import dev.beomseok.boardserver.service.UserService;
+import dev.beomseok.boardserver.service.user.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

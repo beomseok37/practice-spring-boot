@@ -1,4 +1,4 @@
-package dev.beomseok.boardserver.repository;
+package dev.beomseok.boardserver.repository.user;
 
 import dev.beomseok.boardserver.domain.User;
 import dev.beomseok.boardserver.dto.user.UserDTO;

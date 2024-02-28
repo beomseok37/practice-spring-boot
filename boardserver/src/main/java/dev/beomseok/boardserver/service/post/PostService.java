@@ -1,4 +1,4 @@
-package dev.beomseok.boardserver.service;
+package dev.beomseok.boardserver.service.post;
 
 import dev.beomseok.boardserver.dto.post.PostDTO;
 import dev.beomseok.boardserver.dto.post.PostRequest;

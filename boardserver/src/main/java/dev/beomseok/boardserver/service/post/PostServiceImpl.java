@@ -1,4 +1,4 @@
-package dev.beomseok.boardserver.service;
+package dev.beomseok.boardserver.service.post;
 
 import com.querydsl.core.NonUniqueResultException;
 import dev.beomseok.boardserver.domain.Category;
@@ -11,8 +11,8 @@ import dev.beomseok.boardserver.dto.post.PostRequest;
 import dev.beomseok.boardserver.dto.post.PostSearch;
 import dev.beomseok.boardserver.repository.CategoryRepository;
 import dev.beomseok.boardserver.repository.FileRepository;
-import dev.beomseok.boardserver.repository.PostRepository;
-import dev.beomseok.boardserver.repository.UserRepository;
+import dev.beomseok.boardserver.repository.post.PostRepository;
+import dev.beomseok.boardserver.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;

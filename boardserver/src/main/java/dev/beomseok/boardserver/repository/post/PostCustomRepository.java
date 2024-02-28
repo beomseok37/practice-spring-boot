@@ -1,4 +1,4 @@
-package dev.beomseok.boardserver.repository;
+package dev.beomseok.boardserver.repository.post;
 
 import dev.beomseok.boardserver.domain.Post;
 import dev.beomseok.boardserver.dto.post.PostSearch;

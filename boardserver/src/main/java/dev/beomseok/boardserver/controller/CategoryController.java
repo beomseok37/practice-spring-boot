@@ -3,7 +3,7 @@ package dev.beomseok.boardserver.controller;
 import dev.beomseok.boardserver.domain.Category;
 import dev.beomseok.boardserver.dto.category.CategoryDTO;
 import dev.beomseok.boardserver.dto.category.CategoryRequest;
-import dev.beomseok.boardserver.service.CategoryService;
+import dev.beomseok.boardserver.service.category.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

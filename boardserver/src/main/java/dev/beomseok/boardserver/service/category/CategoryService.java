@@ -1,4 +1,4 @@
-package dev.beomseok.boardserver.service;
+package dev.beomseok.boardserver.service.category;
 
 import dev.beomseok.boardserver.dto.category.CategoryDTO;
 

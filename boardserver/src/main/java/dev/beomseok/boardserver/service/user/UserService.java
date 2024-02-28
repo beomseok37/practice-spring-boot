@@ -1,4 +1,4 @@
-package dev.beomseok.boardserver.service;
+package dev.beomseok.boardserver.service.user;
 
 import dev.beomseok.boardserver.dto.user.UserDTO;
 import dev.beomseok.boardserver.dto.user.SignUpRequest;

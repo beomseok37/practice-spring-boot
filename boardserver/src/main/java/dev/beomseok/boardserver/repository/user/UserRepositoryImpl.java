@@ -1,4 +1,4 @@
-package dev.beomseok.boardserver.repository;
+package dev.beomseok.boardserver.repository.user;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dev.beomseok.boardserver.domain.User;

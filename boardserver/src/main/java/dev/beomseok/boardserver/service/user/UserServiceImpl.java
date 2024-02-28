@@ -1,9 +1,9 @@
-package dev.beomseok.boardserver.service;
+package dev.beomseok.boardserver.service.user;
 
 import dev.beomseok.boardserver.domain.User;
 import dev.beomseok.boardserver.dto.user.UserDTO;
 import dev.beomseok.boardserver.dto.user.SignUpRequest;
-import dev.beomseok.boardserver.repository.UserRepository;
+import dev.beomseok.boardserver.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
