@@ -15,6 +15,7 @@ import dev.beomseok.boardserver.repository.post.PostRepository;
 import dev.beomseok.boardserver.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,6 +59,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Async
     @Cacheable(value = "getPosts", key = "'getPosts' + #postSearch.getTitle() + #postSearch.getCategoryId()")
     public List<PostSearchResponse> getPosts(PostSearch postSearch) {
         List<Post> posts = postRepository.findBySearch(postSearch);
