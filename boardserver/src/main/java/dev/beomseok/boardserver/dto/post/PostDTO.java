@@ -1,6 +1,5 @@
 package dev.beomseok.boardserver.dto.post;
 
-import com.querydsl.core.annotations.QueryProjection;
 import dev.beomseok.boardserver.domain.Post;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,25 +19,21 @@ public class PostDTO {
     private int views;
     private List<FileDTO> files;
 
-    @QueryProjection
-    public PostDTO(String userId, String title, String content, LocalDateTime createdDate, LocalDateTime modifiedDate, int views, List<FileDTO> files) {
-        this.userId = userId;
-        this.title = title;
-        this.content = content;
-        this.createdDate = createdDate;
-        this.modifiedDate = modifiedDate;
-        this.views = views;
-        this.files = files;
-    }
+    private List<CommentDTO> comments;
 
-    public static List<PostDTO> postToDTO(List<Post> posts) {
-        return posts.stream().map(post -> {
-            List<FileDTO> files = post.getFiles().stream()
-                    .map(file -> new FileDTO(file.getName(), file.getPath(), file.getExtension()))
-                    .collect(Collectors.toList());
+    public PostDTO(Post post) {
+        this.userId = post.getUser().getUserId();
+        this.title = post.getTitle();
+        this.content = post.getContent();
+        this.createdDate = post.getCreatedDate();
+        this.modifiedDate = post.getModifiedDate();
+        this.views = post.getViews();
+        this.files = post.getFiles().stream()
+                .map(file -> new FileDTO(file.getName(), file.getPath(), file.getExtension()))
+                .collect(Collectors.toList());
 
-            return new PostDTO(post.getUser().getUserId(), post.getTitle(), post.getContent(),
-                    post.getCreatedDate(), post.getModifiedDate(), post.getViews(), files);
-        }).collect(Collectors.toList());
+        this.comments = post.getComments().stream()
+                .map(CommentDTO::new)
+                .collect(Collectors.toList());
     }
 }

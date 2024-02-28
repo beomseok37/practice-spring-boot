@@ -32,6 +32,9 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
     private List<File> files = new ArrayList<>();
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
+
     private Post(String title, boolean isAdmin, String content, int views, User user, Category category) {
         this.title = title;
         this.isAdmin = isAdmin;

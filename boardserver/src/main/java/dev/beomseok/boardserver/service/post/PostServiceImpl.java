@@ -1,15 +1,13 @@
 package dev.beomseok.boardserver.service.post;
 
 import com.querydsl.core.NonUniqueResultException;
-import dev.beomseok.boardserver.domain.Category;
-import dev.beomseok.boardserver.domain.File;
-import dev.beomseok.boardserver.domain.Post;
-import dev.beomseok.boardserver.domain.User;
-import dev.beomseok.boardserver.dto.post.FileDTO;
+import dev.beomseok.boardserver.domain.*;
+import dev.beomseok.boardserver.dto.comment.CommentRequest;
 import dev.beomseok.boardserver.dto.post.PostDTO;
 import dev.beomseok.boardserver.dto.post.PostRequest;
 import dev.beomseok.boardserver.dto.post.PostSearch;
 import dev.beomseok.boardserver.repository.CategoryRepository;
+import dev.beomseok.boardserver.repository.CommentRepository;
 import dev.beomseok.boardserver.repository.FileRepository;
 import dev.beomseok.boardserver.repository.post.PostRepository;
 import dev.beomseok.boardserver.repository.user.UserRepository;
@@ -29,6 +27,7 @@ public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final FileRepository fileRepository;
+    private final CommentRepository commentRepository;
 
     @Override
     @Transactional
@@ -48,14 +47,14 @@ public class PostServiceImpl implements PostService {
     @Override
     public List<PostDTO> getPosts(String userId) {
         List<Post> posts = postRepository.findPosts(userId);
-        return PostDTO.postToDTO(posts);
+        return posts.stream().map(PostDTO::new).collect(Collectors.toList());
     }
 
     @Override
     @Cacheable(value = "getPosts", key = "'getPosts' + #postSearch.getTitle() + #postSearch.getCategoryId()")
     public List<PostDTO> getPosts(PostSearch postSearch) {
         List<Post> posts = postRepository.findBySearch(postSearch);
-        return PostDTO.postToDTO(posts);
+        return posts.stream().map(PostDTO::new).collect(Collectors.toList());
     }
 
     @Override
@@ -89,6 +88,36 @@ public class PostServiceImpl implements PostService {
             throw new IllegalArgumentException("해당 Id의 포스트가 없습니다.");
         }
 
+    }
+
+    @Override
+    @Transactional
+    public void registerComment(CommentRequest request) {
+        Post post = postRepository.findById(request.getPostId())
+                .orElseThrow(IllegalArgumentException::new);
+        Comment parentComment = request.getParentId() != null ? commentRepository.findById(request.getParentId())
+                .orElseThrow(IllegalArgumentException::new) : null;
+
+        Comment comment = new Comment(request.getContent(), post, parentComment);
+        commentRepository.save(comment);
+    }
+
+    @Override
+    @Transactional
+    public void updateComment(Long commentId, CommentRequest request) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        comment.updateComment(request.getContent());
+    }
+
+    @Override
+    @Transactional
+    public void deleteComment(Long commentId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        commentRepository.delete(comment);
     }
 
 

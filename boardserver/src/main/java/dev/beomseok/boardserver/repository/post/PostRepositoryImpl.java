@@ -2,13 +2,13 @@ package dev.beomseok.boardserver.repository.post;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import dev.beomseok.boardserver.domain.Post;
+import dev.beomseok.boardserver.domain.QComment;
 import dev.beomseok.boardserver.dto.post.PostSearch;
 import dev.beomseok.boardserver.utils.PostSearchUtil;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-import static dev.beomseok.boardserver.domain.QFile.file;
 import static dev.beomseok.boardserver.domain.QPost.post;
 import static dev.beomseok.boardserver.domain.QUser.user;
 
@@ -18,9 +18,14 @@ public class PostRepositoryImpl implements PostCustomRepository {
 
     @Override
     public List<Post> findPosts(String userId) {
+        QComment parentComment = new QComment("parentComment");
+        QComment childComment = new QComment("childComment");
+
         return queryFactory.selectFrom(post)
-                .join(post.user, user).fetchJoin()
-                .leftJoin(post.files, file).fetchJoin()
+                .join(post.user)
+                .leftJoin(post.files)
+                .leftJoin(post.comments, parentComment)
+                .leftJoin(childComment).on(parentComment.id.eq(childComment.parentComment.id))
                 .where(user.userId.eq(userId))
                 .fetch();
     }

@@ -25,15 +25,15 @@ CREATE TABLE category
 
 CREATE TABLE post
 (
-    id          BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    title        VARCHAR(45)  NOT NULL,
-    is_admin    BOOLEAN      NOT NULL,
-    content     VARCHAR(200) NOT NULL,
-    views       INT          NOT NULL,
-    created_date  DATETIME    NOT NULL,
-    modified_date DATETIME    NOT NULL,
-    category_id BIGINT       NOT NULL,
-    user_id     BIGINT       NOT NULL,
+    id            BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    title         VARCHAR(45)  NOT NULL,
+    is_admin      BOOLEAN      NOT NULL,
+    content       VARCHAR(200) NOT NULL,
+    views         INT          NOT NULL,
+    created_date  DATETIME     NOT NULL,
+    modified_date DATETIME     NOT NULL,
+    category_id   BIGINT       NOT NULL,
+    user_id       BIGINT       NOT NULL,
     FOREIGN KEY (category_id) REFERENCES category (id),
     FOREIGN KEY (user_id) REFERENCES user (id)
 );
