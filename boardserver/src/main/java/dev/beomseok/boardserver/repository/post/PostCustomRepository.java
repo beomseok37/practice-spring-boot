@@ -11,4 +11,6 @@ public interface PostCustomRepository {
     Post findByPostId(Long postId);
 
     List<Post> findBySearch(PostSearch postSearch);
+
+    List<Post> findByTag(Long tagId);
 }

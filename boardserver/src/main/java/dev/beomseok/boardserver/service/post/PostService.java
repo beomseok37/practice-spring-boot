@@ -4,6 +4,7 @@ import dev.beomseok.boardserver.dto.comment.CommentRequest;
 import dev.beomseok.boardserver.dto.post.PostDTO;
 import dev.beomseok.boardserver.dto.post.PostRequest;
 import dev.beomseok.boardserver.dto.post.PostSearch;
+import dev.beomseok.boardserver.dto.post.PostSearchResponse;
 
 import java.util.List;
 
@@ -12,7 +13,9 @@ public interface PostService {
 
     public List<PostDTO> getPosts(String userId);
 
-    public List<PostDTO> getPosts(PostSearch postSearch);
+    public List<PostSearchResponse> getPosts(PostSearch postSearch);
+
+    public List<PostSearchResponse> getPosts(Long tagId);
 
     public void updatePost(String userId, Long id, PostRequest request);
 

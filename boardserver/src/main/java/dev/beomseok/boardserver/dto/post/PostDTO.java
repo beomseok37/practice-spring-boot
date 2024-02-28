@@ -1,6 +1,7 @@
 package dev.beomseok.boardserver.dto.post;
 
 import dev.beomseok.boardserver.domain.Post;
+import dev.beomseok.boardserver.dto.TagDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,8 +19,8 @@ public class PostDTO {
     private LocalDateTime modifiedDate;
     private int views;
     private List<FileDTO> files;
-
     private List<CommentDTO> comments;
+    private List<TagDTO> tags;
 
     public PostDTO(Post post) {
         this.userId = post.getUser().getUserId();
@@ -32,8 +33,10 @@ public class PostDTO {
                 .map(file -> new FileDTO(file.getName(), file.getPath(), file.getExtension()))
                 .collect(Collectors.toList());
 
-        this.comments = post.getComments().stream()
-                .map(CommentDTO::new)
+        this.comments = post.getComments().stream().map(CommentDTO::new)
+                .collect(Collectors.toList());
+
+        this.tags = post.getTags().stream().map(TagDTO::new)
                 .collect(Collectors.toList());
     }
 }

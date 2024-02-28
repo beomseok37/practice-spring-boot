@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS file;
+DROP TABLE IF EXISTS comment;
 DROP TABLE IF EXISTS post;
 DROP TABLE IF EXISTS user;
 DROP TABLE IF EXISTS category;
@@ -40,12 +41,31 @@ CREATE TABLE post
 
 CREATE TABLE file
 (
-    id        BIGINT      NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    name      varchar(45) NOT NULL,
-    path      varchar(45) NOT NULL,
-    extension varchar(45) NOT NULL,
-    post_id   BIGINT      NOT NULL,
+    id            BIGINT      NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name          varchar(45) NOT NULL,
+    path          varchar(45) NOT NULL,
+    extension     varchar(45) NOT NULL,
+    post_id       BIGINT      NOT NULL,
     created_date  DATETIME    NOT NULL,
     modified_date DATETIME    NOT NULL,
+    FOREIGN KEY (post_id) REFERENCES post (id)
+);
+
+CREATE TABLE comment
+(
+    id        BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    content   varchar(200) NOT NULL,
+    parent_id BIGINT,
+    post_id   BIGINT       NOT NULL,
+    FOREIGN KEY (parent_id) REFERENCES comment (id),
+    FOREIGN KEY (post_id) REFERENCES post (id)
+);
+
+CREATE TABLE tag
+(
+    id      BIGINT       NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name    varchar(200) NOT NULL,
+    url     varchar(200) NOT NULL,
+    post_id BIGINT       NOT NULL,
     FOREIGN KEY (post_id) REFERENCES post (id)
 );

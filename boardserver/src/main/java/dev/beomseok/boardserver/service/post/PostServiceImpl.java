@@ -6,9 +6,11 @@ import dev.beomseok.boardserver.dto.comment.CommentRequest;
 import dev.beomseok.boardserver.dto.post.PostDTO;
 import dev.beomseok.boardserver.dto.post.PostRequest;
 import dev.beomseok.boardserver.dto.post.PostSearch;
+import dev.beomseok.boardserver.dto.post.PostSearchResponse;
 import dev.beomseok.boardserver.repository.CategoryRepository;
 import dev.beomseok.boardserver.repository.CommentRepository;
 import dev.beomseok.boardserver.repository.FileRepository;
+import dev.beomseok.boardserver.repository.TagRepository;
 import dev.beomseok.boardserver.repository.post.PostRepository;
 import dev.beomseok.boardserver.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,7 @@ public class PostServiceImpl implements PostService {
     private final CategoryRepository categoryRepository;
     private final FileRepository fileRepository;
     private final CommentRepository commentRepository;
+    private final TagRepository tagRepository;
 
     @Override
     @Transactional
@@ -42,6 +45,10 @@ public class PostServiceImpl implements PostService {
         List<File> files = request.getFiles().stream()
                 .map(fileDTO -> new File(fileDTO, post)).collect(Collectors.toList());
         fileRepository.saveAll(files);
+
+        List<Tag> tags = request.getTags().stream()
+                .map(tagDTO -> new Tag(tagDTO.getName(),tagDTO.getUrl(),post)).collect(Collectors.toList());
+        tagRepository.saveAll(tags);
     }
 
     @Override
@@ -52,9 +59,15 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Cacheable(value = "getPosts", key = "'getPosts' + #postSearch.getTitle() + #postSearch.getCategoryId()")
-    public List<PostDTO> getPosts(PostSearch postSearch) {
+    public List<PostSearchResponse> getPosts(PostSearch postSearch) {
         List<Post> posts = postRepository.findBySearch(postSearch);
-        return posts.stream().map(PostDTO::new).collect(Collectors.toList());
+        return posts.stream().map(PostSearchResponse::new).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PostSearchResponse> getPosts(Long tagId) {
+        List<Post> posts = postRepository.findByTag(tagId);
+        return posts.stream().map(PostSearchResponse::new).collect(Collectors.toList());
     }
 
     @Override

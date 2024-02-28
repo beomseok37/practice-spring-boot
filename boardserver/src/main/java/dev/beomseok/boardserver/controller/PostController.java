@@ -5,6 +5,7 @@ import dev.beomseok.boardserver.dto.comment.CommentRequest;
 import dev.beomseok.boardserver.dto.post.PostDTO;
 import dev.beomseok.boardserver.dto.post.PostRequest;
 import dev.beomseok.boardserver.dto.post.PostSearch;
+import dev.beomseok.boardserver.dto.post.PostSearchResponse;
 import dev.beomseok.boardserver.service.post.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,8 +34,13 @@ public class PostController {
     }
 
     @PostMapping("/search")
-    public List<PostDTO> searchPosts(@RequestBody PostSearch postSearch) {
+    public List<PostSearchResponse> searchPosts(@RequestBody PostSearch postSearch) {
         return postService.getPosts(postSearch);
+    }
+
+    @GetMapping("/tags")
+    public List<PostSearchResponse> searchPostByTag(@RequestParam("tagId") Long tagId) {
+        return postService.getPosts(tagId);
     }
 
     @PatchMapping("{postId}")
