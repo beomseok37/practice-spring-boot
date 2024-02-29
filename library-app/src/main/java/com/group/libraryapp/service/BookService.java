@@ -2,7 +2,6 @@ package com.group.libraryapp.service;
 
 import com.group.libraryapp.domain.book.Book;
 import com.group.libraryapp.domain.user.User;
-import com.group.libraryapp.domain.user.UserLoanHistory;
 import com.group.libraryapp.dto.book.BookCreateRequest;
 import com.group.libraryapp.dto.book.BookLoanRequest;
 import com.group.libraryapp.dto.book.BookReturnRequest;
@@ -35,13 +34,13 @@ public class BookService {
         Book book = bookRepository.findByName(request.getBookName())
                 .orElseThrow(IllegalArgumentException::new);
 
-        if(userLoanHistoryRepository.existsByBookNameAndIsReturn(book.getName(),false)){
+        if (userLoanHistoryRepository.existsByBookNameAndIsReturn(book.getName(), false)) {
             throw new IllegalArgumentException();
         }
         User user = userRepository.findAllByName(request.getUserName())
                 .orElseThrow(IllegalArgumentException::new);
 
-        userLoanHistoryRepository.save(new UserLoanHistory(user.getId(),book.getName()));
+        user.loanBook(book.getName());
     }
 
     @Transactional
@@ -49,9 +48,6 @@ public class BookService {
         User user = userRepository.findAllByName(request.getUserName())
                 .orElseThrow(IllegalArgumentException::new);
 
-        UserLoanHistory userLoanHistory = userLoanHistoryRepository.findByUserIdAndBookName(user.getId(), request.getBookName())
-                .orElseThrow(IllegalArgumentException::new);
-
-        userLoanHistory.doReturn();
+        user.returnBook(request.getBookName());
     }
 }

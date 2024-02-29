@@ -1,6 +1,8 @@
 package com.group.libraryapp.domain.user;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class User {
@@ -12,6 +14,9 @@ public class User {
     private String name;
 
     private Integer age;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UserLoanHistory> userLoanHistoryList = new ArrayList<>();
 
     protected User() {
     }
@@ -39,5 +44,16 @@ public class User {
     //==수정자 메서드==//
     public void updateName(String name) {
         this.name = name;
+    }
+
+    public void loanBook(String bookName) {
+        this.userLoanHistoryList.add(new UserLoanHistory(this, bookName));
+    }
+
+    public void returnBook(String bookName) {
+        UserLoanHistory userLoanHistory = this.userLoanHistoryList.stream().filter(history -> bookName.equals(history.getBookName()))
+                .findFirst().orElseThrow(IllegalArgumentException::new);
+
+        userLoanHistory.doReturn();
     }
 }
