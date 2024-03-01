@@ -4,6 +4,7 @@ import dev.beomseok.company.dto.TeamCreateRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,8 @@ public class Team {
     @Column(nullable = false,length = 20)
     private String teamName;
 
+    private int dayOffApplyLimit;
+
     @OneToMany(mappedBy = "team")
     private List<Member> members = new ArrayList<>();
 
@@ -24,4 +27,9 @@ public class Team {
     }
 
     public Team(){}
+
+    public boolean isApplyingDayOffPossible(LocalDate startDate) {
+        LocalDate limitDate = startDate.minusDays(this.getDayOffApplyLimit());
+        return LocalDate.now().compareTo(limitDate) > 0;
+    }
 }

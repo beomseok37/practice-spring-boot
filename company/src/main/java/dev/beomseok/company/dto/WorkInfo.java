@@ -6,8 +6,8 @@ import java.time.LocalDate;
 
 @Getter
 public class WorkInfo {
-    private LocalDate date;
-    private long workingMinutes;
+    protected LocalDate date;
+    protected long workingMinutes;
 
     public WorkInfo(LocalDate date, long workingMinutes){
         this.date= date;

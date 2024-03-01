@@ -5,29 +5,34 @@ import lombok.Getter;
 
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Getter
-public class WorkResponse {
-    private List<WorkInfo> detail;
+public class WorkResponse<T extends WorkInfo> {
+    private List<T> detail;
     private long sum;
 
-    public WorkResponse(List<Work> result) {
+    public WorkResponse() {
         this.detail = new ArrayList<>();
         this.sum = 0;
-
-        result.forEach(work -> {
-            long minutes = Duration.between(work.getWorkStart(), work.getWorkEnd()).toMinutes();
-            addMinutes(minutes);
-            addWorkInfo(new WorkInfo(work.getWorkStart().toLocalDate(),minutes));
-        });
     }
 
-    private void addMinutes(long minute){
+    public void addMinutes(long minute){
         this.sum += minute;
     }
 
-    private void addWorkInfo(WorkInfo workInfo){
+    public void addWorkInfo(T workInfo){
         this.detail.add(workInfo);
+    }
+
+    public void sortDetail(){
+        this.detail.sort(new Comparator<>() {
+            @Override
+            public int compare(T o1, T o2) {
+                return o1.getDate().compareTo(o2.getDate());
+            }
+        });
     }
 }

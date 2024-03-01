@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -36,6 +37,9 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Work> works = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    private List<DayOff> dayOffs = new ArrayList<>();
+
     public Member(String memberName,boolean isManager, LocalDate birthday) {
         this.memberName = memberName;
         this.isManager = isManager;
@@ -60,5 +64,17 @@ public class Member {
         Work todayWork = this.works.stream().filter(work -> work.getWorkStart().toLocalDate().compareTo(today) == 0)
                 .findFirst().orElseThrow(IllegalArgumentException::new);
         todayWork.endWork();
+    }
+
+    public boolean isDayOffLeft(int year,int count) {
+        Integer dayOffCount = this.dayOffs.stream().map(dayOff -> dayOff.getCount()).collect(Collectors.toList())
+                .stream().reduce(0, (prev, curr) -> prev + curr);
+
+        return dayOffCount+count > (workStartDate.getYear()==year ? 11:15);
+    }
+
+    public void applyDayOff(LocalDate startDate, LocalDate endDate) {
+        DayOff dayOff = new DayOff(this,startDate, endDate);
+        this.dayOffs.add(dayOff);
     }
 }

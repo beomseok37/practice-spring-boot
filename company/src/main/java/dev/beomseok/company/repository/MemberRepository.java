@@ -16,4 +16,8 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     @Query("select m from Member m join fetch m.works w " +
             "where m.id = :memberId and w.workEnd is null")
     Optional<Member> findWorkNotEndedById(@Param("memberId") long memberId);
+
+    // day off
+    @Query("select m from Member m left join fetch m.dayOffs d join fetch m.team t where m.id = :memberId")
+    Optional<Member> findMemberForDayOff(@Param("memberId") long memberId);
 }

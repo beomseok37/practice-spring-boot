@@ -1,8 +1,6 @@
 package dev.beomseok.company.controller;
 
-import dev.beomseok.company.dto.MemberCreateRequest;
-import dev.beomseok.company.dto.WorkResponse;
-import dev.beomseok.company.dto.YearMonthParameter;
+import dev.beomseok.company.dto.*;
 import dev.beomseok.company.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -31,9 +29,21 @@ public class MemberController {
         memberService.endWork(memberId);
     }
 
-    @GetMapping("/{memberId}")
-    public WorkResponse getWorkInfos(@PathVariable("memberId") Long memberId,
+    @GetMapping("/v1/{memberId}")
+    public WorkResponse<WorkInfo> getWorkInfosV1(@PathVariable("memberId") Long memberId,
+                                                   @ModelAttribute YearMonthParameter yearMonth){
+        return memberService.getWorkInfosV1(memberId, yearMonth.getLocalDateTime());
+    }
+
+    @PostMapping("/day-off/{memberId}")
+    public void registerDayOff(@PathVariable("memberId") Long memberId,
+                               @RequestBody DayOffCreateRequest request) {
+        memberService.registerDayOff(memberId,request);
+    }
+
+    @GetMapping("/v2/{memberId}")
+    public WorkResponse<WorkInfoWithDayOff> getWorkInfosV2(@PathVariable("memberId") Long memberId,
                                      @ModelAttribute YearMonthParameter yearMonth){
-        return memberService.getWorkInfos(memberId, yearMonth.getLocalDateTime());
+        return memberService.getWorkInfosV2(memberId, yearMonth.getLocalDateTime());
     }
 }
