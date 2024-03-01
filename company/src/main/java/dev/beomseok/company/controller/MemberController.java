@@ -5,8 +5,7 @@ import dev.beomseok.company.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.YearMonth;
+import java.util.List;
 
 @RestController
 @RequestMapping("/members")
@@ -45,5 +44,10 @@ public class MemberController {
     public WorkResponse<WorkInfoWithDayOff> getWorkInfosV2(@PathVariable("memberId") Long memberId,
                                      @ModelAttribute YearMonthParameter yearMonth){
         return memberService.getWorkInfosV2(memberId, yearMonth.getLocalDateTime());
+    }
+
+    @GetMapping("/over-time")
+    public List<OverTimeWorkInfo> getOverTimeWorkInfo(@ModelAttribute YearMonthParameter yearMonth){
+        return memberService.getWorkOverTime(yearMonth.getLocalDate());
     }
 }

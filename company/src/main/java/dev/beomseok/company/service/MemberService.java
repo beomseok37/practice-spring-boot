@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -62,7 +63,7 @@ public class MemberService {
         result.forEach(work -> {
             long minutes = Duration.between(work.getWorkStart(), work.getWorkEnd()).toMinutes();
             workResponse.addMinutes(minutes);
-            workResponse.addWorkInfo(new WorkInfo(work.getWorkStart().toLocalDate(),minutes));
+            workResponse.addWorkInfo(new WorkInfo(work.getWorkStart().toLocalDate(), minutes));
         });
 
         return workResponse;
@@ -90,25 +91,43 @@ public class MemberService {
         member.applyDayOff(request.getStartDate(), request.getEndDate());
     }
 
-    public WorkResponse<WorkInfoWithDayOff> getWorkInfosV2(Long memberId, LocalDateTime baseDate){
+    public WorkResponse<WorkInfoWithDayOff> getWorkInfosV2(Long memberId, LocalDateTime baseDate) {
         List<Work> workResult = workRepository.findMemberWorkInfo(memberId, baseDate);
-        List<DayOff> dayOffResult = dayOffRepository.findByMemberIdAndYearMonth(memberId,baseDate.toLocalDate());
+        List<DayOff> dayOffResult = dayOffRepository.findByMemberIdAndYearMonth(memberId, baseDate.toLocalDate());
         WorkResponse<WorkInfoWithDayOff> workResponse = new WorkResponse<>();
 
         workResult.forEach(work -> {
             long minutes = Duration.between(work.getWorkStart(), work.getWorkEnd()).toMinutes();
             workResponse.addMinutes(minutes);
-            workResponse.addWorkInfo(new WorkInfoWithDayOff(work.getWorkStart().toLocalDate(),minutes,false));
+            workResponse.addWorkInfo(new WorkInfoWithDayOff(work.getWorkStart().toLocalDate(), minutes, false));
         });
 
         dayOffResult.forEach(dayOff -> {
-            for (LocalDate date = dayOff.getStartDate();date.isBefore(dayOff.getEndDate()); date = date.plusDays(1)){
-                workResponse.addWorkInfo(new WorkInfoWithDayOff(date,0,true));
+            for (LocalDate date = dayOff.getStartDate(); date.isBefore(dayOff.getEndDate()); date = date.plusDays(1)) {
+                workResponse.addWorkInfo(new WorkInfoWithDayOff(date, 0, true));
             }
-            workResponse.addWorkInfo(new WorkInfoWithDayOff(dayOff.getEndDate(),0,true));
+            workResponse.addWorkInfo(new WorkInfoWithDayOff(dayOff.getEndDate(), 0, true));
         });
         workResponse.sortDetail();
 
         return workResponse;
+    }
+
+    public List<OverTimeWorkInfo> getWorkOverTime(LocalDate baseDate) {
+        // 기준 근무 시간 구하기
+        long baseWorkTime = getBaseWorkTime(baseDate);
+
+        // 각 멤버마다 총 근무시간 구하기
+        return workRepository.findByMemberIdAndDate(baseDate).stream()
+                .map(totalWorkTime -> new OverTimeWorkInfo(totalWorkTime, baseWorkTime))
+                .collect(Collectors.toList());
+    }
+
+    public long getBaseWorkTime(LocalDate baseDate) {
+        long count = 0;
+        for (LocalDate date = baseDate; date.isBefore(baseDate.plusMonths(1)); date = date.plusDays(1)) {
+            count += date.getDayOfWeek().getValue() < 6 ? 1 : 0;
+        }
+        return count * 480;
     }
 }

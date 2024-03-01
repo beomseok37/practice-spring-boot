@@ -19,7 +19,13 @@ public class Work {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    protected Work(){}
+    public Work(Member member, LocalDateTime workStart,LocalDateTime workEnd){
+        this.member = member;
+        this.workStart = workStart;
+        this.workEnd = workEnd;
+    }
+
+    public Work(){}
 
     public Work(Member member){
         this.workStart = LocalDateTime.now();

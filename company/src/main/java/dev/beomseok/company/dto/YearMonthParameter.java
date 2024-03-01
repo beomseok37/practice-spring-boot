@@ -14,4 +14,8 @@ public class YearMonthParameter {
     public LocalDateTime getLocalDateTime(){
         return LocalDateTime.of(year,month,1,0,0);
     }
+
+    public LocalDate getLocalDate(){
+        return getLocalDateTime().toLocalDate();
+    }
 }
