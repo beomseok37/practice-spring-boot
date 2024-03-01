@@ -33,7 +33,7 @@ public class Member {
     @JoinColumn(name = "team_id")
     private Team team;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Work> works = new ArrayList<>();
 
     public Member(String memberName,boolean isManager, LocalDate birthday) {
@@ -52,6 +52,13 @@ public class Member {
     }
 
     public void startWork() {
+        this.works.add(new Work(this));
+    }
 
+    public void endWork(){
+        LocalDate today = LocalDate.now();
+        Work todayWork = this.works.stream().filter(work -> work.getWorkStart().toLocalDate().compareTo(today) == 0)
+                .findFirst().orElseThrow(IllegalArgumentException::new);
+        todayWork.endWork();
     }
 }
