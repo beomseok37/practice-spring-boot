@@ -1,11 +1,8 @@
-package dev.beomseok.company.dto;
+package dev.beomseok.company.dto.work;
 
-import dev.beomseok.company.domain.Work;
 import lombok.Getter;
 
-import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 

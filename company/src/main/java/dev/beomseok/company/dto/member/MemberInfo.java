@@ -1,4 +1,4 @@
-package dev.beomseok.company.dto;
+package dev.beomseok.company.dto.member;
 
 import dev.beomseok.company.domain.Member;
 import jakarta.persistence.EnumType;

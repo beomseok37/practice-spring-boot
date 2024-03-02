@@ -1,6 +1,5 @@
 package dev.beomseok.company.domain;
 
-import dev.beomseok.company.dto.MemberCreateRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;

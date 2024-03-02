@@ -1,6 +1,5 @@
 package dev.beomseok.company.domain;
 
-import dev.beomseok.company.dto.TeamCreateRequest;
 import jakarta.persistence.*;
 import lombok.Getter;
 

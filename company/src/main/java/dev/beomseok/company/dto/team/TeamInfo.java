@@ -1,4 +1,4 @@
-package dev.beomseok.company.dto;
+package dev.beomseok.company.dto.team;
 
 import dev.beomseok.company.domain.Member;
 import dev.beomseok.company.domain.Team;

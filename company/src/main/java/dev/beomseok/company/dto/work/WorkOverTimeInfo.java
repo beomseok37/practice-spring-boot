@@ -1,14 +1,14 @@
-package dev.beomseok.company.dto;
+package dev.beomseok.company.dto.work;
 
 import lombok.Getter;
 
 @Getter
-public class OverTimeWorkInfo {
+public class WorkOverTimeInfo {
     private Long id;
     private String name;
     private Long overTimeMinutes;
 
-    public OverTimeWorkInfo(TotalWorkTimeDto totalWorkTime,Long baseOverTime) {
+    public WorkOverTimeInfo(WorkTotalTimeDto totalWorkTime, Long baseOverTime) {
         this.id = totalWorkTime.getId();
         this.name = totalWorkTime.getName();
         this.overTimeMinutes = totalWorkTime.getTotalTime()>baseOverTime ? totalWorkTime.getTotalTime()-baseOverTime : 0;

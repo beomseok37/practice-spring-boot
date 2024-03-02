@@ -2,9 +2,9 @@ package dev.beomseok.company.service;
 
 import dev.beomseok.company.domain.Member;
 import dev.beomseok.company.domain.Team;
-import dev.beomseok.company.dto.MemberInfo;
-import dev.beomseok.company.dto.TeamCreateRequest;
-import dev.beomseok.company.dto.TeamInfo;
+import dev.beomseok.company.dto.member.MemberInfo;
+import dev.beomseok.company.dto.team.TeamCreateRequest;
+import dev.beomseok.company.dto.team.TeamInfo;
 import dev.beomseok.company.repository.MemberRepository;
 import dev.beomseok.company.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;

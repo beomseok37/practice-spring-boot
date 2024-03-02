@@ -1,6 +1,11 @@
 package dev.beomseok.company.controller;
 
 import dev.beomseok.company.dto.*;
+import dev.beomseok.company.dto.member.MemberCreateRequest;
+import dev.beomseok.company.dto.work.WorkOverTimeInfo;
+import dev.beomseok.company.dto.work.WorkInfo;
+import dev.beomseok.company.dto.work.WorkInfoWithDayOff;
+import dev.beomseok.company.dto.work.WorkResponse;
 import dev.beomseok.company.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +35,7 @@ public class MemberController {
 
     @GetMapping("/v1/{memberId}")
     public WorkResponse<WorkInfo> getWorkInfosV1(@PathVariable("memberId") Long memberId,
-                                                   @ModelAttribute YearMonthParameter yearMonth){
+                                                 @ModelAttribute YearMonthParameter yearMonth){
         return memberService.getWorkInfosV1(memberId, yearMonth.getLocalDateTime());
     }
 
@@ -42,12 +47,12 @@ public class MemberController {
 
     @GetMapping("/v2/{memberId}")
     public WorkResponse<WorkInfoWithDayOff> getWorkInfosV2(@PathVariable("memberId") Long memberId,
-                                     @ModelAttribute YearMonthParameter yearMonth){
+                                                           @ModelAttribute YearMonthParameter yearMonth){
         return memberService.getWorkInfosV2(memberId, yearMonth.getLocalDateTime());
     }
 
     @GetMapping("/over-time")
-    public List<OverTimeWorkInfo> getOverTimeWorkInfo(@ModelAttribute YearMonthParameter yearMonth){
+    public List<WorkOverTimeInfo> getOverTimeWorkInfo(@ModelAttribute YearMonthParameter yearMonth){
         return memberService.getWorkOverTime(yearMonth.getLocalDate());
     }
 }

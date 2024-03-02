@@ -1,8 +1,8 @@
 package dev.beomseok.company.controller;
 
-import dev.beomseok.company.dto.MemberInfo;
-import dev.beomseok.company.dto.TeamCreateRequest;
-import dev.beomseok.company.dto.TeamInfo;
+import dev.beomseok.company.dto.member.MemberInfo;
+import dev.beomseok.company.dto.team.TeamCreateRequest;
+import dev.beomseok.company.dto.team.TeamInfo;
 import dev.beomseok.company.service.TeamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

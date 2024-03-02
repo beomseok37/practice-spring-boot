@@ -1,4 +1,4 @@
-package dev.beomseok.company.dto;
+package dev.beomseok.company.dto.work;
 
 import lombok.Getter;
 

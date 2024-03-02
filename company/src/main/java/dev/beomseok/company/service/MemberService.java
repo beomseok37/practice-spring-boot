@@ -5,6 +5,11 @@ import dev.beomseok.company.domain.Member;
 import dev.beomseok.company.domain.Team;
 import dev.beomseok.company.domain.Work;
 import dev.beomseok.company.dto.*;
+import dev.beomseok.company.dto.member.MemberCreateRequest;
+import dev.beomseok.company.dto.work.WorkOverTimeInfo;
+import dev.beomseok.company.dto.work.WorkInfo;
+import dev.beomseok.company.dto.work.WorkInfoWithDayOff;
+import dev.beomseok.company.dto.work.WorkResponse;
 import dev.beomseok.company.repository.DayOffRepository;
 import dev.beomseok.company.repository.MemberRepository;
 import dev.beomseok.company.repository.TeamRepository;
@@ -113,13 +118,13 @@ public class MemberService {
         return workResponse;
     }
 
-    public List<OverTimeWorkInfo> getWorkOverTime(LocalDate baseDate) {
+    public List<WorkOverTimeInfo> getWorkOverTime(LocalDate baseDate) {
         // 기준 근무 시간 구하기
         long baseWorkTime = getBaseWorkTime(baseDate);
 
         // 각 멤버마다 총 근무시간 구하기
         return workRepository.findByMemberIdAndDate(baseDate).stream()
-                .map(totalWorkTime -> new OverTimeWorkInfo(totalWorkTime, baseWorkTime))
+                .map(totalWorkTime -> new WorkOverTimeInfo(totalWorkTime, baseWorkTime))
                 .collect(Collectors.toList());
     }
 
