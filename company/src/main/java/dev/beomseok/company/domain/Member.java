@@ -72,6 +72,13 @@ public class Member {
         return dayOffCount+count > (workStartDate.getYear()==year ? 11:15);
     }
 
+    public int getLeftDayOffCount() {
+        Integer dayOffCount = this.dayOffs.stream().map(dayOff -> dayOff.getCount()).collect(Collectors.toList())
+                .stream().reduce(0, (prev, curr) -> prev + curr);
+
+        return (workStartDate.getYear()==LocalDate.now().getYear() ? 11:15) - dayOffCount;
+    }
+
     public void applyDayOff(LocalDate startDate, LocalDate endDate) {
         DayOff dayOff = new DayOff(this,startDate, endDate);
         this.dayOffs.add(dayOff);

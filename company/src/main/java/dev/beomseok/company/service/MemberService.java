@@ -135,4 +135,11 @@ public class MemberService {
         }
         return count * 480;
     }
+
+    public int getLeftDayOffCount(Long memberId) {
+        Member member = memberRepository.findMemberForDayOff(memberId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        return member.getLeftDayOffCount();
+    }
 }

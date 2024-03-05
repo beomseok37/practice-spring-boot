@@ -45,6 +45,11 @@ public class MemberController {
         memberService.registerDayOff(memberId,request);
     }
 
+    @GetMapping("/day-off/{memberId}")
+    public int getLeftDayOffCount(@PathVariable("memberId") Long memberId) {
+        return memberService.getLeftDayOffCount(memberId);
+    }
+
     @GetMapping("/v2/{memberId}")
     public WorkResponse<WorkInfoWithDayOff> getWorkInfosV2(@PathVariable("memberId") Long memberId,
                                                            @ModelAttribute YearMonthParameter yearMonth){
