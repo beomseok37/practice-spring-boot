@@ -8,10 +8,10 @@
 | 과제2    | [링크](https://www.inflearn.com/blogs/6553) |
 | 과제3    | [링크](https://www.inflearn.com/blogs/6633) |
 | 과제4    | [링크](https://www.inflearn.com/blogs/6640) |
-| 과제5    | [링크](https://www.inflearn.com/blogs/6646)                                    |
-| 과제6    | []()                                      |
-| 과제7    | []()                                      |
-| 미니프로젝트 | []()                                      |
+| 과제5    | [링크](https://www.inflearn.com/blogs/6646) |
+| 과제6    | [링크](https://www.inflearn.com/blogs/6817) |
+| 과제7    | [링크](https://www.inflearn.com/blogs/6850) |
+| 미니프로젝트 | [링크](https://github.com/beomseok37/practice-spring-boot/tree/main/company)                                    |
 
 ## Day 1
 
